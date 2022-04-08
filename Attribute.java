@@ -4,7 +4,7 @@ public abstract class Attribute {
 
     // costruttore di classe. Inizializza i valori dei membri name, index
     public Attribute(String name, int index){
-
+        //TODO
     }
 
     // Restituisce il valore nel membro name;

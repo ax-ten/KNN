@@ -10,9 +10,9 @@ class Data {
 	Double target[];
 	int numberOfExamples;
 	Attribute explanatorySet[];
+	ContinuousAttribute classAttribute;
 
 	Data(String fileName)throws FileNotFoundException{
-		ContinuousAttribute classAttribute;
 
 		File inFile = new File (fileName);
 
@@ -44,7 +44,7 @@ class Data {
 		}
 
 		//avvalorare numero di esempi
-		Integer numberOfExamples = new Integer(line.split(" ")[1]);
+		numberOfExamples = new Integer(line.split(" ")[1]);
 
 		//popolare data e target
 		data = new Example[numberOfExamples];
@@ -166,6 +166,7 @@ class Data {
 	}
 
 	double avgClosest(Example e, int k){
+		//TODO
 		// 1. 	Avvalora key con le distanze calcolate tra ciascuna istanza di Example memorizzata in data
 		//			ed e (usare il metodo distance di Example)
 		// 2. 	ordina data, target e key in accordo ai valori contenuti in key (usare quicksort)
