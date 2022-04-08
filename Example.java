@@ -24,12 +24,15 @@ public class Example {
     //      example del parametro e
     public void swap(Example e) {
         //TODO
+        // due cicli for per scambiare gli elementi, eliminare quelli in eccesso
     }
 
     // calcola e restituisce la distanza di Hamming calcolata tra l’istanza di Example passata come
     //      parametro e quella corrente
     public double distance(Example e){
         //TODO
+        // controllare che siano della stessa lunghezza
+        // due cicli for per aumentare un contatore in base alla differenza di oggetti
         return 0d;
     }
 }

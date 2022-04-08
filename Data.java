@@ -102,7 +102,6 @@ class Data {
 
 			while(key[j]>x) {
 				j--;
-
 			}
 
 			if(i<j) {
