@@ -1,5 +1,5 @@
 public class DiscreteAttribute extends Attribute {
-    public DiscreteAttribute(String s, short iAttribute) {
+    public DiscreteAttribute(String name, short index) {
         super();
     }
 }
