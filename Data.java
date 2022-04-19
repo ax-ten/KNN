@@ -2,10 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-
-
 class Data {
-
 	Example[] data;
 	Double target[];
 	int numberOfExamples;
@@ -50,7 +47,6 @@ class Data {
 		data = new Example[numberOfExamples];
 		target = new Double[numberOfExamples];
 
-
 		short iRow=0;
 		while (sc.hasNextLine())
 		{
@@ -67,8 +63,6 @@ class Data {
 		}
 		sc.close();
 	}
-
-
 
 	/*
 	 * Partiziona data rispetto all'elemento x di key e restiutisce il punto di separazione
@@ -97,7 +91,6 @@ class Data {
 
 			while(i<=sup && key[i]<=x){
 				i++;
-
 			}
 
 			while(key[j]>x) {
@@ -113,8 +106,6 @@ class Data {
 				temp=key[i];
 				key[i]=key[j];
 				key[j]=temp;
-
-
 			}
 			else break;
 		}
@@ -129,7 +120,6 @@ class Data {
 		key[j]=temp;
 
 		return j;
-
 	}
 
 	/*
@@ -138,26 +128,17 @@ class Data {
 	 * @param A
 	 */
 	private void quicksort(double key[], int inf, int sup){
-
 		if(sup>=inf){
-
-			int pos;
-
-			pos=partition(key, inf, sup);
+			int pos = partition(key, inf, sup);
 
 			if ((pos-inf) < (sup-pos+1)) {
 				quicksort(key, inf, pos-1);
 				quicksort(key, pos+1,sup);
-			}
-			else
-			{
+			} else {
 				quicksort(key, pos+1, sup);
 				quicksort(key, inf, pos-1);
 			}
-
-
 		}
-
 	}
 
 	int getNumberOfExplanatoryAttributes(){
@@ -165,14 +146,37 @@ class Data {
 	}
 
 	double avgClosest(Example e, int k){
-		//TODO
-		// 1. 	Avvalora key con le distanze calcolate tra ciascuna istanza di Example memorizzata in data
-		//			ed e (usare il metodo distance di Example)
+		//1. 	Avvalora key con le distanze calcolate tra ciascuna istanza di Example memorizzata in data ed e
+		double[] key = new double[data.length];
+
+		for (int i=0; i< data.length; i++){
+			key[i] = e.distance(data[i]);
+		}
+
 		// 2. 	ordina data, target e key in accordo ai valori contenuti in key (usare quicksort)
+		quicksort(key, 0, data.length-1);
+
 		// 3. 	identifica gli esempi di data che sono associati alle k distanze più piccole in key
+		int i=0 ,j=1;
+		while (j < k){
+			if (key[i] != key[i+1]){
+				j++;
+			}
+			i++;
+		}
+		int solutions = i-1;
+
 		// 4. 	calcola e restituisce la media dei valori memorizzati in target in corrispondenza degli esempi
 		//			isolati al punto 3
-		return 0d;
+		return avgTillPoint(key, solutions);
+	}
+
+	private double avgTillPoint( double[] array, int point){
+		int sum =0;
+		for(int i=0; i < point; i++){
+			sum += Double.valueOf( array[i] );
+		}
+		return sum/point;
 	}
 
 	public static void main(String args[])throws FileNotFoundException{
