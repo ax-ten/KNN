@@ -3,8 +3,8 @@ public abstract class Attribute {
     int index; // identificativo numerico dell'attributo
 
     public Attribute(String name, int index){
-        //TODO
-        // inizializza name ed index
+        this.name = name;
+        this.index = index;
     }
 
     // %return : nome dell'attributo;
