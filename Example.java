@@ -18,12 +18,17 @@ public class Example {
         return example[index];
     }
 
-    // #e
-    //
-    public void swap(Example e) {
-        this.example = new Object[e.example.length];
-        for (int i=0; i<e.example.length; i++){
+    // scambia i valori contenuti nel campo example dell’ oggetto corrente con i valori contenuti nel campo
+    //      example del parametro e
+    public void swap(Example e)  {
+        if (e.example.length != this.example.length){
+            throw new IndexOutOfBoundsException();
+        }
+        Example temp = new Example(this.example.length);
+        for (int i=0; i<this.example.length; i++){
+            temp.set(this.get(i), i);
             this.set(e.get(i), i);
+            e.set(temp.get(i), i);
         }
     }
 
@@ -31,15 +36,14 @@ public class Example {
     //      parametro e quella corrente
     public double distance(Example e){
         double d = 0d;
-        try {
-            for (int i=0; i<e.example.length; i++){
-                if (this.get(i) == e.get(i)){
-                    d++;
-                }
-            }
-        } catch (Exception exc ){
-            System.out.println("Eccezione trovata: " + exc );
+        if (e.example.length != this.example.length){
+            throw new IndexOutOfBoundsException();
         }
-        return 0d;
+        for (int i=0; i<e.example.length; i++){
+            if (!this.get(i).equals(e.get(i))){
+                d++;
+            }
+        }
+        return d;
     }
 }

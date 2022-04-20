@@ -16,7 +16,4 @@ public abstract class Attribute {
     public int getIndex(){
         return index;
     }
-
-
-
 }

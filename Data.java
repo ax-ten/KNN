@@ -157,26 +157,22 @@ class Data {
 		quicksort(key, 0, data.length-1);
 
 		// 3. 	identifica gli esempi di data che sono associati alle k distanze più piccole in key
-		int i=0 ,j=1;
-		while (j < k){
-			if (key[i] != key[i+1]){
-				j++;
-			}
+		int i=0;
+		while (i < key.length && key[i] < k){
 			i++;
 		}
-		int solutions = i-1;
 
 		// 4. 	calcola e restituisce la media dei valori memorizzati in target in corrispondenza degli esempi
 		//			isolati al punto 3
-		return avgTillPoint(key, solutions);
+		return avgTillPoint(target, i-1);
 	}
 
-	private double avgTillPoint( double[] array, int point){
-		int sum =0;
-		for(int i=0; i < point; i++){
-			sum += Double.valueOf( array[i] );
+	private double avgTillPoint( Double[] array, int point){
+		double sum =0d;
+		for(int i=0; i <= point; i++){
+			sum += array[i];
 		}
-		return sum/point;
+		return sum/(point+1);
 	}
 
 	public static void main(String args[])throws FileNotFoundException{
