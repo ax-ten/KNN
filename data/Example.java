@@ -5,21 +5,34 @@ import utility.ExampleSizeException;
 
 public class Example {
     private List<Object> example;
+    int size;
 
     public Example(int size) {
         this.example = new ArrayList<>(size);
+        this.size = size;
     }
 
     public int getSize(){
         return example.size();
     }
 
-    public void set(Object o, int index) throws IndexOutOfBoundsException {
-        this.example.set(index, o);
+    public void set(int index,Object o) throws IndexOutOfBoundsException {
+        if (index > size) throw new IndexOutOfBoundsException();
+        else {
+            try {
+                this.example.set(index, o);
+            } catch (IndexOutOfBoundsException e){
+                this.example.add(o);
+            }
+        }
     }
 
     public Object get(int index) throws IndexOutOfBoundsException {
         return this.example.get(index);
+    }
+
+    public void add(Object o) {
+        this.example.add(o);
     }
 
     public void swap(Example e) throws ExampleSizeException {
@@ -29,9 +42,9 @@ public class Example {
             Example temp = new Example(this.example.size());
 
             for(int i = 0; i < this.example.size(); ++i) {
-                temp.set(this.get(i), i);
-                this.set(e.get(i), i);
-                e.set(temp.get(i), i);
+                temp.set(i,this.get(i));
+                this.set(i,e.get(i));
+                e.set(i,temp.get(i));
             }
 
         }

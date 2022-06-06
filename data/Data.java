@@ -51,38 +51,38 @@ public class Data {
             this.target = new ArrayList<>(this.numberOfExamples);
 
         for (short iRow = 1; sc.hasNextLine(); ++iRow) {
-                Example e = new Example(explanatorySet.size());
-                line = sc.nextLine();
-                s = line.split(",");
+            Example e = new Example(explanatorySet.size());
+            line = sc.nextLine();
+            s = line.split(",");
 
-                for (short jColumn = 0; jColumn < s.length - 1; ++jColumn) {
-                    System.out.println("exp:"+explanatorySet.size()+"size"+e.getSize());
-                    e.set(s[jColumn], jColumn);
-                }
 
-                try {
-                    this.data.add(e);
-                } catch (ArrayIndexOutOfBoundsException exc){
-                    throw new TrainingDataException("Numero di esempi maggiore da quanto indicato");
-                }
-                try {
-                    this.target.add(Double.parseDouble(s[s.length-1]));
-                    //this.target[iRow] = new Double(s[s.length - 1]);
-                } catch (Exception exc) {
-                    throw new TrainingDataException(
-                            String.format("Training set privo di variabile target numerica in riga %d", iRow + 1));
-                }
-
-                if(iRow ==0 && !sc.hasNextLine()){
-                    throw new TrainingDataException("Training set vuoto");
-                }
-
-                if(!sc.hasNextLine() && iRow<numberOfExamples){
-                    throw new TrainingDataException ("Numero di esempi minore da quanto indicato");
-                }
+            for (short jColumn = 0; jColumn < s.length - 1; ++jColumn) {
+                e.set(jColumn, s[jColumn]);
             }
-            sc.close();
+
+            try {
+                this.data.add(e);
+            } catch (ArrayIndexOutOfBoundsException exc){
+                throw new TrainingDataException("Numero di esempi maggiore da quanto indicato");
+            }
+            try {
+                this.target.add(Double.parseDouble(s[s.length-1]));
+                //this.target[iRow] = new Double(s[s.length - 1]);
+            } catch (Exception exc) {
+                throw new TrainingDataException(
+                        String.format("Training set privo di variabile target numerica in riga %d", iRow + 1));
+            }
+
+            if(iRow ==0 && !sc.hasNextLine()){
+                throw new TrainingDataException("Training set vuoto");
+            }
+
+            if(!sc.hasNextLine() && iRow<numberOfExamples){
+                throw new TrainingDataException ("Numero di esempi minore da quanto indicato");
+            }
         }
+        sc.close();
+    }
 
 
     private int partition(List<Double> key, int inf, int sup) throws ExampleSizeException {
@@ -164,7 +164,7 @@ public class Data {
 
         int i;
         for(i = 0; i < this.data.size(); ++i) {
-            key.set(i, e.distance(this.data.get(i)));
+            key.add(e.distance(this.data.get(i)));
         }
 
         this.quicksort(key, 0, this.data.size() - 1);
