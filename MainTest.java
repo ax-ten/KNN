@@ -14,11 +14,12 @@ public class MainTest {
 	/**
 	 * @param args
 	 */
-	/*
 	 public static void main(String[] args) throws FileNotFoundException{
 		
 		String menu="";
-		
+		String testFolder="Test file/";
+		String testExt=".dat";
+
 		do {
 			//load or train knn
 			KNN knn=null;
@@ -35,7 +36,7 @@ public class MainTest {
 					try {
 						System.out.println("Nome file contenente un training set valido:");
 						file=Keyboard.readString();
-						trainingSet= new Data(file);
+						trainingSet=new Data(testFolder+file+testExt);
 						System.out.println(trainingSet);
 						flag=true;
 					}
@@ -43,8 +44,6 @@ public class MainTest {
 				}
 				while(!flag);			
 				knn=new KNN(trainingSet);
-				try{knn.salva(file+".dmp");}
-				catch(IOException exc) {System.out.println(exc.getMessage());}
 			}
 			else
 			{
@@ -53,31 +52,42 @@ public class MainTest {
 					try {
 						System.out.println("Nome file contenente una serializzazione dell'oggetto KNN:");
 						String file=Keyboard.readString();
-						knn=KNN.carica(file);
+						knn=KNN.carica(testFolder+file+testExt);
+						System.out.println(knn);
 						flag=true;
 					}
 					catch(IOException | ClassNotFoundException exc){System.out.println(exc.getMessage());}
 				}
 				while(!flag);		
 			}
-			
 			// predict
-			String c;
-			do {
-				// read example withKeyboard
-				System.out.println(knn.predict());
-				System.out.println("Vuoi ripetere? Y/N");
-				c=Keyboard.readString();
-				
-			}while (c.toLowerCase().equals("y"));	
+			try{
+				String c;
+				do {
+					// read example withKeyboard
+					System.out.println(knn.predict());
+					System.out.println("Vuoi ripetere? Y/N");
+					c=Keyboard.readString();
 					
-			System.out.println("Vuoi ripetere una nuova esecuzione con un nuovo oggetto KNN? (Y/N)");
-			menu=Keyboard.readString();
+				}while (c.toLowerCase().equals("y"));	
+						
+				System.out.println("Vuoi ripetere una nuova esecuzione con un nuovo oggetto KNN? (Y/N)");
+				menu=Keyboard.readString();
+
+				System.out.println("Vuoi salvare l'attuale oggetto KNN? (Y/N)");
+				String save = Keyboard.readString();
+				if(save.toLowerCase().equals("y")){
+					System.out.println("Nome con cui salvare l'oggetto KNN");
+					String file = Keyboard.readString();
+					try{knn.salva(testFolder+file+testExt);}
+					catch(IOException exc) {System.out.println(exc.getMessage());}
+				}
+			}catch (ExampleSizeException e){System.out.println(e.getMessage());}
 		}
 		while(menu.toLowerCase().equals("y"));
 	}
-}*/
-
+}
+/*	Main test prima di serializzazione
 public static void main(String[] args) throws FileNotFoundException{
 	try {
 		Data trainingSet= new Data("Test file/provaC.dat");
@@ -93,4 +103,4 @@ public static void main(String[] args) throws FileNotFoundException{
 	}	catch(TrainingDataException exc){System.out.println(exc.getMessage());}	
 		catch(ExampleSizeException e){System.out.println(e.getMessage());}
 	}
-}
+}*/

@@ -5,9 +5,10 @@ import utility.TrainingDataException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.*;
 
-public class Data {
+public class Data implements Serializable{
     private List<Example> data;
     private List<Example> dataScaled;
     private List<Double> target;

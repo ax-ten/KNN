@@ -1,9 +1,10 @@
 package data;
 
+import java.io.Serializable;
 import java.util.*;
 import utility.ExampleSizeException;
 
-public class Example {
+public class Example implements Serializable{
     private List<Object> example;
     int size;
 
