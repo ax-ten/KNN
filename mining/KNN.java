@@ -23,7 +23,7 @@ public class KNN {
 
         for (int i=0; i<size; i++){
             System.out.printf("Inserisci valore X[%d]:%n",i);
-            e.set(Keyboard.readWord(),i);
+            e.set(i,Keyboard.readWord());
         }
 
         System.out.println("Inserisci valore k>=1:");

@@ -1,36 +1,50 @@
 package data;
 
+import java.util.*;
 import utility.ExampleSizeException;
 
 public class Example {
-    Object[] example;
+    private List<Object> example;
+    int size;
 
     public Example(int size) {
-        this.example = new Object[size];
+        this.example = new ArrayList<>(size);
+        this.size = size;
     }
 
     public int getSize(){
-        return example.length;
+        return example.size();
     }
 
-    public void set(Object o, int index) throws IndexOutOfBoundsException {
-        this.example[index] = o;
+    public void set(int index,Object o) throws IndexOutOfBoundsException {
+        if (index > size) throw new IndexOutOfBoundsException();
+        else {
+            try {
+                this.example.set(index, o);
+            } catch (IndexOutOfBoundsException e){
+                this.example.add(o);
+            }
+        }
     }
 
     public Object get(int index) throws IndexOutOfBoundsException {
-        return this.example[index];
+        return this.example.get(index);
+    }
+
+    public void add(Object o) {
+        this.example.add(o);
     }
 
     public void swap(Example e) throws ExampleSizeException {
-        if (e.example.length != this.example.length) {
+        if (e.example.size() != this.example.size()) {
             throw new ExampleSizeException();
         } else {
-            Example temp = new Example(this.example.length);
+            Example temp = new Example(this.example.size());
 
-            for(int i = 0; i < this.example.length; ++i) {
-                temp.set(this.get(i), i);
-                this.set(e.get(i), i);
-                e.set(temp.get(i), i);
+            for(int i = 0; i < this.example.size(); ++i) {
+                temp.set(i,this.get(i));
+                this.set(i,e.get(i));
+                e.set(i,temp.get(i));
             }
 
         }
@@ -39,17 +53,17 @@ public class Example {
     public String toString(){
         StringBuilder output = new StringBuilder();
         for (int i=0;i<this.getSize();i++){
-            output.append(String.format("%s,", this.example[i]));
+            output.append(String.format("%s,", this.example.get(i)));
         }
         return output.toString();
     }
 
     public double distance(Example e) throws ExampleSizeException {
         double d = 0.0D;
-        if (e.example.length != this.example.length) {
+        if (e.example.size() != this.example.size()) {
             throw new ExampleSizeException();
         } else {
-            for(int i = 0; i < e.example.length; ++i) {
+            for(int i = 0; i < e.example.size(); ++i) {
                 if (!this.get(i).equals(e.get(i))) {
                     ++d;
                 }
