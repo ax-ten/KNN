@@ -70,7 +70,6 @@ public class Example {
                 } else if (this.get(i) instanceof Double && e.get(i) instanceof Double){
                     d=+Math.abs((Double)this.get(i)-(Double)e.get(i));
                 } else throw new IllegalArgumentException("Data type mismatch at row "+i);
-                System.out.println("distance "+d);
             }
             return d;
         }

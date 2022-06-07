@@ -94,4 +94,3 @@ public static void main(String[] args) throws FileNotFoundException{
 		catch(ExampleSizeException e){System.out.println(e.getMessage());}
 	}
 }
-	

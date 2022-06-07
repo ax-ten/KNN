@@ -107,7 +107,7 @@ public class Data {
         int j = sup;
         int med = (inf + sup) / 2;
         Double x = key.get(med);
-        Collections.swap(data, inf, med);
+        Collections.swap(dataScaled, inf, med);
         Collections.swap(target, inf, med);
         Collections.swap(key, inf, med);
 
@@ -118,13 +118,13 @@ public class Data {
                 }
 
                 if (i >= j) {
-                    Collections.swap(data, inf, j);
+                    Collections.swap(dataScaled, inf, j);
                     Collections.swap(target, inf, j);
                     Collections.swap(key, inf, j);
                     return j;
                 }
 
-                Collections.swap(data, i, j);
+                Collections.swap(dataScaled, i, j);
                 Collections.swap(target, i, j);
                 Collections.swap(key, i, j);
             }
@@ -168,19 +168,20 @@ public class Data {
 
         this.quicksort(key, 0, this.dataScaled.size() - 1);
 
+        System.out.println(key);
+
         for(i = 0; i < key.size() && key.get(i) < (double)k; ++i) {
         }
-
+        
         return this.avgTillPoint(this.target, i - 1);
     }
 
     private double avgTillPoint(List<Double> array, int point) {
         double sum = 0.0D;
-
         for(int i = 0; i <= point; ++i) {
             sum += array.get(i);
+            System.out.println("Sum "+sum);
         }
-
         return sum / (double)(point + 1);
     }
 
@@ -197,6 +198,27 @@ public class Data {
         }
         return example;
     } 
+
+    public Example readExample() {
+        Example e =new Example(numberOfExamples);
+        int i=0;
+        for(Attribute a:explanatorySet)    {
+            if(a instanceof DiscreteAttribute) {
+                System.out.print("Inserisci valore discreto X["+i+"]:");
+                e.set(i, Keyboard.readString());
+            } else {
+                double x=0.0;
+                //TODO sostituire con while?
+                do {
+                    System.out.print("Inserisci valore continuo X["+i+"]:");
+                    x=Keyboard.readDouble();
+                } while(new Double(x).equals(Double.NaN));
+                e.set(i,x);
+            }
+            i++;
+        }
+        return e;
+    }
 
     public String toString(){
         StringBuilder output = new StringBuilder();
