@@ -65,10 +65,10 @@ public class Example {
             for(int i = 0; i < e.example.size(); ++i) {
                 if (this.get(i) instanceof String && e.get(i) instanceof String){
                     if (!this.get(i).equals(e.get(i))) {
-                        d++;
+                        d = d+1;
                     }
                 } else if (this.get(i) instanceof Double && e.get(i) instanceof Double){
-                    d=+Math.abs((Double)this.get(i)-(Double)e.get(i));
+                    d=d+Math.abs((Double)this.get(i)-(Double)e.get(i));
                 } else throw new IllegalArgumentException("Data type mismatch at row "+i);
             }
             return d;
