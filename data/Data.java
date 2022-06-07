@@ -1,5 +1,6 @@
 package data;
 import utility.ExampleSizeException;
+import utility.Keyboard;
 import utility.TrainingDataException;
 
 import java.io.File;
@@ -8,6 +9,7 @@ import java.util.*;
 
 public class Data {
     private List<Example> data;
+    private List<Example> dataScaled;
     private List<Double> target;
     int numberOfExamples;
     private List<Attribute> explanatorySet;
@@ -26,38 +28,47 @@ public class Data {
         if (!line.contains("@schema")) {
             throw new TrainingDataException("Errore nello schema");
         }
-            String[] s = line.split(" ");
+        String[] s = line.split(" ");
 
-            explanatorySet = new ArrayList<>(new Integer(s[1]));
-            short iAttribute = 0;
+        explanatorySet = new ArrayList<>(new Integer(s[1]));
+        short iAttribute = 0;
 
-            for(line = sc.nextLine(); !line.contains("@data"); line = sc.nextLine()) {
-                s = line.split(" ");
-                if (s[0].equals("@desc")) {
-                    explanatorySet.add(new DiscreteAttribute(s[1], iAttribute));
-                } else if (s[0].equals("@target")) {
-                    this.classAttribute = new ContinuousAttribute(s[1], iAttribute);
-                }
-
-                ++iAttribute;
+        for(line = sc.nextLine(); !line.contains("@data"); line = sc.nextLine()) {
+            s = line.split(" ");
+            if (s[0].equals("@desc")){
+                if(s[2].equals("discrete")) {
+                explanatorySet.add(new DiscreteAttribute(s[1], iAttribute));
+                } else if (s[2].equals("continuous")) {
+                    explanatorySet.add(new ContinuousAttribute(s[1], iAttribute));
+                } else throw new TrainingDataException("Attributo di tipo non specificato");
+            } else if (s[0].equals("@target")) {
+                this.classAttribute = new ContinuousAttribute(s[1], iAttribute);
             }
+            ++iAttribute;
+        }
 
-            this.numberOfExamples = new Integer(line.split(" ")[1]);
-            if (numberOfExamples == 0){
-                throw new TrainingDataException("Training set vuoto");
-            }
+        this.numberOfExamples = new Integer(line.split(" ")[1]);
+        if (numberOfExamples == 0){
+            throw new TrainingDataException("Training set vuoto");
+        }
 
-            this.data = new ArrayList<>(this.numberOfExamples);
-            this.target = new ArrayList<>(this.numberOfExamples);
+        this.data = new ArrayList<>(this.numberOfExamples);
+        this.target = new ArrayList<>(this.numberOfExamples);
 
         for (short iRow = 1; sc.hasNextLine(); ++iRow) {
             Example e = new Example(explanatorySet.size());
             line = sc.nextLine();
             s = line.split(",");
 
-
             for (short jColumn = 0; jColumn < s.length - 1; ++jColumn) {
+                if(explanatorySet.get(jColumn) instanceof DiscreteAttribute){
                 e.set(jColumn, s[jColumn]);
+                } else {
+                    Double value = Double.parseDouble(s[jColumn]);
+                    e.set(jColumn, value);
+                    ((ContinuousAttribute) explanatorySet.get(jColumn)).setMin(value);
+                    ((ContinuousAttribute) explanatorySet.get(jColumn)).setMax(value);
+                }
             }
 
             try {
@@ -67,7 +78,6 @@ public class Data {
             }
             try {
                 this.target.add(Double.parseDouble(s[s.length-1]));
-                //this.target[iRow] = new Double(s[s.length - 1]);
             } catch (Exception exc) {
                 throw new TrainingDataException(
                         String.format("Training set privo di variabile target numerica in riga %d", iRow + 1));
@@ -82,8 +92,15 @@ public class Data {
             }
         }
         sc.close();
+        scaleData();
     }
 
+    private void scaleData(){
+        this.dataScaled = new ArrayList<>(data.size());
+        for (int i = 0; i < data.size(); i++){
+            this.dataScaled.add(scaledExample(data.get(i)));
+        }
+    }
 
     private int partition(List<Double> key, int inf, int sup) throws ExampleSizeException {
         int i = inf;
@@ -93,13 +110,6 @@ public class Data {
         Collections.swap(data, inf, med);
         Collections.swap(target, inf, med);
         Collections.swap(key, inf, med);
-        /*this.data[inf].swap(this.data[med]);
-        double temp = this.target[inf];
-        this.target[inf] = this.target[med];
-        this.target[med] = temp;
-        temp = key[inf];
-        key[inf] = key[med];
-        key[med] = temp;*/
 
         while(true) {
             while(i > sup || !(key.get(i) <= x)) {
@@ -111,26 +121,12 @@ public class Data {
                     Collections.swap(data, inf, j);
                     Collections.swap(target, inf, j);
                     Collections.swap(key, inf, j);
-                    /*this.data[inf].swap(this.data[j]);
-                    temp = this.target[inf];
-                    this.target[inf] = this.target[j];
-                    this.target[j] = temp;
-                    temp = key[inf];
-                    key[inf] = key[j];
-                    key[j] = temp;*/
                     return j;
                 }
 
                 Collections.swap(data, i, j);
                 Collections.swap(target, i, j);
                 Collections.swap(key, i, j);
-                /*this.data[i].swap(this.data[j]);
-                temp = this.target[i];
-                this.target[i] = this.target[j];
-                this.target[j] = temp;
-                temp = key[i];
-                key[i] = key[j];
-                key[j] = temp;*/
             }
 
             ++i;
@@ -148,26 +144,29 @@ public class Data {
                 this.quicksort(key, inf, pos - 1);
             }
         }
-
     }
 
     public int getExampleSize(){
         return data.get(0).getSize();
     }
     
-    int getNumberOfExplanatoryAttributes() {
+    public int getNumberOfExplanatoryAttributes() {
         return this.explanatorySet.size();
+    }
+
+    public List<Attribute> getExplanatorySet(){
+        return explanatorySet;
     }
 
     public double avgClosest(Example e, int k) throws ExampleSizeException {
         List<Double> key = new ArrayList<>();
-
+        Example scaledExample = scaledExample(e);
         int i;
-        for(i = 0; i < this.data.size(); ++i) {
-            key.add(e.distance(this.data.get(i)));
+        for(i = 0; i < this.dataScaled.size(); ++i) {
+            key.add(scaledExample.distance(this.dataScaled.get(i)));
         }
 
-        this.quicksort(key, 0, this.data.size() - 1);
+        this.quicksort(key, 0, this.dataScaled.size() - 1);
 
         for(i = 0; i < key.size() && key.get(i) < (double)k; ++i) {
         }
@@ -184,6 +183,20 @@ public class Data {
 
         return sum / (double)(point + 1);
     }
+
+    //Restituisce nuova istanza di Example con valori discreti inalterati e valori continui scalati tra 0 e 1
+    Example scaledExample (Example e) {
+        int eSize = e.getSize();
+        Example example = new Example(eSize);
+        for (int i=0; i < eSize; i++){
+            if(explanatorySet.get(i) instanceof DiscreteAttribute){
+                example.set(i, e.get(i));
+            } else if (explanatorySet.get(i) instanceof ContinuousAttribute){
+                example.set(i,((ContinuousAttribute)explanatorySet.get(i)).scale((Double)e.get(i)));
+            }
+        }
+        return example;
+    } 
 
     public String toString(){
         StringBuilder output = new StringBuilder();

@@ -3,17 +3,19 @@ import java.io.IOException;
 
 import data.Data;
 import data.Example;
-import data.ExampleSizeException;
-import data.TrainingDataException;
 import mining.KNN;
 import utility.Keyboard;
+import utility.ExampleSizeException;
+import utility.TrainingDataException;
 
 public class MainTest {
 
+	
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) throws FileNotFoundException{
+	/*
+	 public static void main(String[] args) throws FileNotFoundException{
 		
 		String menu="";
 		
@@ -74,4 +76,22 @@ public class MainTest {
 		}
 		while(menu.toLowerCase().equals("y"));
 	}
+}*/
+
+public static void main(String[] args) throws FileNotFoundException{
+	try {
+		Data trainingSet= new Data("Test file/provaC.dat");
+		System.out.println(trainingSet);
+		KNN knn=new KNN(trainingSet);
+		String r;
+		do {
+			// read example withKeyboard
+			System.out.println("Prediction:"+knn.predict());
+			System.out.println("Vuoi ripetere? Y/N");
+			r=Keyboard.readString();
+		}while (r.toLowerCase().equals("y"));
+	}	catch(TrainingDataException exc){System.out.println(exc.getMessage());}	
+		catch(ExampleSizeException e){System.out.println(e.getMessage());}
+	}
 }
+	

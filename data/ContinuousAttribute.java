@@ -7,6 +7,8 @@ public class ContinuousAttribute extends Attribute {
 
     public ContinuousAttribute(String name, short index) {
         super(name, index);
+        this.min = 0;
+        this.max = 0;
     }
     //Aggiorna min in base al valore v passato come parametro
     void setMin (Double v){
@@ -16,7 +18,7 @@ public class ContinuousAttribute extends Attribute {
     void setMax (Double v){
         if (v > max) max = v;
     }
-    
+
     double scale (Double value){
         double scale = (value-min)/(max-min);
         return scale;
