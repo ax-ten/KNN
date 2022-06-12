@@ -1,5 +1,6 @@
 package data;
 import database.DbAccess;
+import database.InsufficientColumnNumberException;
 import example.Example;
 import example.ExampleSizeException;
 import utility.Keyboard;
@@ -97,7 +98,9 @@ public class Data implements Serializable{
         scaleData();
     }
 
-    public Data(DbAccess db, String table) {
+    public Data(DbAccess db, String table) throws TrainingDataException, InsufficientColumnNumberException {
+        /* TODO  inizializza una istanza di Data da una tabella di nome tableName in un database a cui si
+             accede tramite l’istanza di DbAccess */
     }
 
     private void scaleData(){

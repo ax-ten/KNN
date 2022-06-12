@@ -35,6 +35,7 @@ public class TableData {
 
 	private void init() throws SQLException{		
 		String query="select ";
+		int i=0;
 		
 		Iterator<Column> it=tSchema.iterator();
 		for(Column c:tSchema){			
@@ -48,12 +49,12 @@ public class TableData {
 		ResultSet rs = statement.executeQuery(query);
 		while (rs.next()) {
 			Example currentTuple=new Example(tSchema.getNumberOfAttributes());
-			int i=0;
+			i=0;
 			for(Column c:tSchema) {
 				if(c.isNumber())
-					currentTuple.set(rs.getDouble(i+1),i);
+					currentTuple.set(i, rs.getDouble(i+1));
 				else
-					currentTuple.set(rs.getString(i+1),i);
+					currentTuple.set(i, rs.getString(i+1));
 				i++;
 			}
 			transSet.add(currentTuple);
@@ -73,7 +74,11 @@ public class TableData {
 	public List<Example> getExamples(){
 		return transSet; 
 	}
-	
+
+	public Object getAggregateColumnValue(Column column, QUERY_TYPE aggregate) {
+		//TODO formula ed esegue una query SQL per estrarre il valore MIN o MAX di column
+		return null;
+	}
 
 	public List getTargetValues(){
 		return target; 
