@@ -1,9 +1,10 @@
 package data;
 
+import java.io.Serializable;
 import java.util.*;
 import utility.ExampleSizeException;
 
-public class Example {
+public class Example implements Serializable{
     private List<Object> example;
     int size;
 
@@ -16,7 +17,7 @@ public class Example {
         return example.size();
     }
 
-    public void set(int index,Object o) throws IndexOutOfBoundsException {
+    public void set(int index, Object o) throws IndexOutOfBoundsException {
         if (index > size) throw new IndexOutOfBoundsException();
         else {
             try {
@@ -46,7 +47,6 @@ public class Example {
                 this.set(i,e.get(i));
                 e.set(i,temp.get(i));
             }
-
         }
     }
 
@@ -64,9 +64,13 @@ public class Example {
             throw new ExampleSizeException();
         } else {
             for(int i = 0; i < e.example.size(); ++i) {
-                if (!this.get(i).equals(e.get(i))) {
-                    ++d;
-                }
+                if (this.get(i) instanceof String && e.get(i) instanceof String){
+                    if (!this.get(i).equals(e.get(i))) {
+                        d = d+1;
+                    }
+                } else if (this.get(i) instanceof Double && e.get(i) instanceof Double){
+                    d=d+Math.abs((Double)this.get(i)-(Double)e.get(i));
+                } else throw new IllegalArgumentException("Data type mismatch at row "+i);
             }
             return d;
         }

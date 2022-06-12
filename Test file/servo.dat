@@ -1,8 +1,8 @@
 @schema 4
-@desc motor
-@desc screw 
-@desc pgain 
-@desc vgain 
+@desc motor discrete
+@desc screw discrete
+@desc pgain continuous
+@desc vgain continuous
 @target class
 @data 167
 E,E,5,4, 0.28125095
