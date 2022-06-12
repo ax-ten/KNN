@@ -1,7 +1,8 @@
 package data;
-import utility.ExampleSizeException;
+import database.DbAccess;
+import example.Example;
+import example.ExampleSizeException;
 import utility.Keyboard;
-import utility.TrainingDataException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -94,6 +95,9 @@ public class Data implements Serializable{
         }
         sc.close();
         scaleData();
+    }
+
+    public Data(DbAccess db, String table) {
     }
 
     private void scaleData(){
