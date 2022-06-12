@@ -29,27 +29,7 @@ public class DbAccess {
 	public DbAccess() throws DatabaseConnectionException{
 		String connectionString =  DBMS + "://" + SERVER + ":" + PORT + "/" + DATABASE
 				+ "?user=" + USER_ID + "&password=" + PASSWORD + "&serverTimezone=UTC";
-		// non più richiesto con la versione 6 del driver jdbc
-		
-		/*try {
-			
-				Class.forName(DRIVER_CLASS_NAME).newInstance();
-			} 
-		catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				throw new DatabaseConnectionException(e.toString());
-			}
-		catch (InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					throw new DatabaseConnectionException(e.toString());
-			} 
-		catch (ClassNotFoundException e) {
-			System.out.println("Impossibile trovare il Driver: " + DRIVER_CLASS_NAME);
-			throw new DatabaseConnectionException(e.toString());
-		}
-		*/
+
 		try {
 			conn = DriverManager.getConnection(connectionString, USER_ID, PASSWORD);
 			

@@ -75,15 +75,14 @@ public class MainTest {
 							System.out.print("Connecting to DB...");
 							DbAccess db=new DbAccess();
 							System.out.println("done!");
-							System.out.println("Nome tabella:");
-							table=Keyboard.readString();
+							System.out.println("Nome tabella:" + Keyboard.readString());
 							trainingSet= new Data(db,table);
 							System.out.println(trainingSet);
 							flag=true;
 							db.closeConnection();
 						}
-						catch(InsufficientColumnNumberException | TrainingDataException exc1){System.out.println(exc1.getMessage());}
-						catch(DatabaseConnectionException exc2){System.out.println(exc2.getMessage());}
+						catch(InsufficientColumnNumberException | TrainingDataException | DatabaseConnectionException exc){
+							System.out.println(exc.getMessage());}
 					}
 					while(!flag);			
 					
@@ -101,11 +100,11 @@ public class MainTest {
 				System.out.println("Vuoi ripetere? Y/N");
 				c=Keyboard.readString();
 				
-			}while (c.toLowerCase().equals("y"));	
+			}while (c.equalsIgnoreCase("y"));
 					
 			System.out.println("Vuoi ripetere una nuova esecuzione con un nuovo oggetto KNN? (Y/N)");
 			menu=Keyboard.readString();
 		}
-		while(menu.toLowerCase().equals("y"));
+		while(menu.equalsIgnoreCase("y"));
 	}
 }
