@@ -1,6 +1,5 @@
 package database;
 
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -57,10 +56,18 @@ public class TableSchema implements Iterable<Column>{
 	      }
 	     
 	      res.close();
-	      if(target==null || tableSchema.size()==0) throw new InsufficientColumnNumberException("La tabella selezionata contiene meno di due colonne");
+	      if(target==null || tableSchema.size()==0) throw
+				  new InsufficientColumnNumberException("La tabella selezionata contiene meno di due colonne");
 		
 		}
 
+		public Column getColumn(String columnName) {
+			for (Column c : tableSchema){
+				if (c.getColumnName().equals(columnName))
+					return c;
+			}
+			return null;
+		}
 
 		public Column target(){
 			return target;
@@ -76,7 +83,6 @@ public class TableSchema implements Iterable<Column>{
 
 		@Override
 		public Iterator<Column> iterator() {
-			// TODO Auto-generated method stub
 			return tableSchema.iterator();
 		}
 

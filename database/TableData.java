@@ -31,6 +31,10 @@ public class TableData {
 		target= new ArrayList();	
 		init();
 	}
+
+	public Column getColumn(String columnName){
+		return this.tSchema.getColumn(columnName);
+	}
 	
 
 	private void init() throws SQLException{		
@@ -75,9 +79,10 @@ public class TableData {
 		return transSet; 
 	}
 
-	public Object getAggregateColumnValue(Column column, QUERY_TYPE aggregate) {
-		//TODO formula ed esegue una query SQL per estrarre il valore MIN o MAX di column
-		return null;
+	public Object getAggregateColumnValue(Column column, QUERY_TYPE aggregate) throws SQLException {
+		Statement statement = db.getConnection().createStatement();
+		ResultSet rs = statement.executeQuery("SELECT " +aggregate+ " ("+column+") FROM "+table);
+		return rs.getDouble(0);
 	}
 
 	public List getTargetValues(){

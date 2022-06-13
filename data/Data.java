@@ -1,13 +1,15 @@
 package data;
-import database.DbAccess;
-import database.InsufficientColumnNumberException;
+import database.*;
 import example.Example;
 import example.ExampleSizeException;
+import javafx.scene.control.Tab;
 import utility.Keyboard;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 public class Data implements Serializable{
@@ -21,16 +23,20 @@ public class Data implements Serializable{
     public Data(String fileName) throws TrainingDataException {
         File inFile = new File(fileName);
         Scanner sc;
+        String line;
+
         try {
             sc = new Scanner(inFile);
         } catch (FileNotFoundException exc){
             throw new TrainingDataException("File di training inesistente");
         }
-        String line = sc.nextLine();
+
+        line = sc.nextLine();
 
         if (!line.contains("@schema")) {
             throw new TrainingDataException("Errore nello schema");
         }
+
         String[] s = line.split(" ");
 
         explanatorySet = new ArrayList<>(new Integer(s[1]));
@@ -62,6 +68,10 @@ public class Data implements Serializable{
             Example e = new Example(explanatorySet.size());
             line = sc.nextLine();
             s = line.split(",");
+
+            /*TODO se explanatorySet è un array da due oggetti di cui solo il secondo va cambiato, non è meglio
+               togliere il prossimo ciclo for?
+             */
 
             for (short jColumn = 0; jColumn < s.length - 1; ++jColumn) {
                 if(explanatorySet.get(jColumn) instanceof DiscreteAttribute){
@@ -98,9 +108,19 @@ public class Data implements Serializable{
         scaleData();
     }
 
-    public Data(DbAccess db, String table) throws TrainingDataException, InsufficientColumnNumberException {
-        /* TODO  inizializza una istanza di Data da una tabella di nome tableName in un database a cui si
-             accede tramite l’istanza di DbAccess */
+    public Data(DbAccess db, String table) throws TrainingDataException, InsufficientColumnNumberException, SQLException {
+        TableData td = new TableData(db, new TableSchema(table, db));
+        data = td.getExamples();
+        target = td.getTargetValues();
+        this.numberOfExamples = data.size();
+        //dato che il db è molto più statico come struttura ho preferito mettere indici statici anziché cicli for
+        explanatorySet.add(new DiscreteAttribute("X", (short) 0));
+        explanatorySet.add(new ContinuousAttribute("Y", (short) 1));
+        ((ContinuousAttribute) explanatorySet.get(1)).setMin(
+                (Double) td.getAggregateColumnValue(td.getColumn("Y"),QUERY_TYPE.MIN));
+        ((ContinuousAttribute) explanatorySet.get(1)).setMax(
+                (Double) td.getAggregateColumnValue(td.getColumn("Y"),QUERY_TYPE.MAX));
+        scaleData();
     }
 
     private void scaleData(){
@@ -176,7 +196,6 @@ public class Data implements Serializable{
 
         this.quicksort(key, 0, this.dataScaled.size() - 1);
 
-        System.out.println(key);
 
         for(i = 0; i < key.size() && key.get(i) < (double)k; ++i) {
         }
@@ -188,7 +207,6 @@ public class Data implements Serializable{
         double sum = 0.0D;
         for(int i = 0; i <= point; ++i) {
             sum += array.get(i);
-            System.out.println("Sum "+sum);
         }
         return sum / (double)(point + 1);
     }
@@ -216,7 +234,6 @@ public class Data implements Serializable{
                 e.set(i, Keyboard.readString());
             } else {
                 double x=0.0;
-                //TODO sostituire con while?
                 do {
                     System.out.print("Inserisci valore continuo X["+i+"]:");
                     x=Keyboard.readDouble();
