@@ -1,9 +1,9 @@
 @schema 2
-@desc X 
-@desc Y 
+@desc X discrete
+@desc Y discrete
 @target class
 @data 15
-A,B,1
+A,A,1
 A,A,1
 A,A,1
 A,A,1

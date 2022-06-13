@@ -18,7 +18,8 @@ public class MainTest {
 	 * @param args
 	 */
 	public static void main(String[] args) throws FileNotFoundException, ExampleSizeException {
-		
+		final String LOCALPATH = "Test file/";
+		final String EXT = ".dat";
 		String menu="";
 		
 		do {
@@ -39,7 +40,7 @@ public class MainTest {
 						try {
 							System.out.println("Nome file contenente un training set valido:");
 							file=Keyboard.readString();
-							trainingSet= new Data(file);
+							trainingSet= new Data(LOCALPATH+file+EXT);
 							System.out.println(trainingSet);
 							flag=true;
 						}
@@ -58,7 +59,7 @@ public class MainTest {
 						try {
 							System.out.println("Nome file contenente una serializzazione dell'oggetto KNN:");
 							String file=Keyboard.readString();
-							knn=KNN.carica(file);
+							knn=KNN.carica(LOCALPATH+file+EXT);
 							flag=true;
 						}
 						catch(IOException | ClassNotFoundException exc){System.out.println(exc.getMessage());}
@@ -81,8 +82,10 @@ public class MainTest {
 							flag=true;
 							db.closeConnection();
 						}
-						catch(InsufficientColumnNumberException | TrainingDataException | DatabaseConnectionException exc){
-							System.out.println(exc.getMessage());}
+						catch(InsufficientColumnNumberException | SQLException |
+								TrainingDataException | DatabaseConnectionException exc){
+							System.out.println(exc.getMessage());
+						}
 					}
 					while(!flag);			
 					
