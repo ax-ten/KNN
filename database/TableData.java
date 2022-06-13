@@ -35,7 +35,6 @@ public class TableData {
 	public Column getColumn(String columnName){
 		return this.tSchema.getColumn(columnName);
 	}
-	
 
 	private void init() throws SQLException{		
 		String query="select ";
@@ -71,9 +70,6 @@ public class TableData {
 		rs.close();
 		statement.close();	
 	}
-	
-	
-
 	
 	public List<Example> getExamples(){
 		return transSet; 

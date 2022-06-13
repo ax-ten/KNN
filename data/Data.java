@@ -2,13 +2,11 @@ package data;
 import database.*;
 import example.Example;
 import example.ExampleSizeException;
-import javafx.scene.control.Tab;
 import utility.Keyboard;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -24,32 +22,30 @@ public class Data implements Serializable{
         File inFile = new File(fileName);
         Scanner sc;
         String line;
+        String[] s;
 
         try {
             sc = new Scanner(inFile);
+            line = sc.nextLine();
+            if (!line.contains("@schema")) {
+                throw new TrainingDataException("Errore nello schema");
+            }
         } catch (FileNotFoundException exc){
             throw new TrainingDataException("File di training inesistente");
         }
 
-        line = sc.nextLine();
-
-        if (!line.contains("@schema")) {
-            throw new TrainingDataException("Errore nello schema");
-        }
-
-        String[] s = line.split(" ");
-
-        explanatorySet = new ArrayList<>(new Integer(s[1]));
+        explanatorySet = new ArrayList<>();
         short iAttribute = 0;
 
         for(line = sc.nextLine(); !line.contains("@data"); line = sc.nextLine()) {
             s = line.split(" ");
             if (s[0].equals("@desc")){
                 if(s[2].equals("discrete")) {
-                explanatorySet.add(new DiscreteAttribute(s[1], iAttribute));
+                    explanatorySet.add(new DiscreteAttribute(s[1], iAttribute));
                 } else if (s[2].equals("continuous")) {
                     explanatorySet.add(new ContinuousAttribute(s[1], iAttribute));
-                } else throw new TrainingDataException("Attributo di tipo non specificato");
+                } else
+                    throw new TrainingDataException("Attributo di tipo non specificato");
             } else if (s[0].equals("@target")) {
                 this.classAttribute = new ContinuousAttribute(s[1], iAttribute);
             }
@@ -57,12 +53,12 @@ public class Data implements Serializable{
         }
 
         this.numberOfExamples = new Integer(line.split(" ")[1]);
+        this.data = new ArrayList<>(this.numberOfExamples);
+        this.target = new ArrayList<>(this.numberOfExamples);
+
         if (numberOfExamples == 0){
             throw new TrainingDataException("Training set vuoto");
         }
-
-        this.data = new ArrayList<>(this.numberOfExamples);
-        this.target = new ArrayList<>(this.numberOfExamples);
 
         for (short iRow = 1; sc.hasNextLine(); ++iRow) {
             Example e = new Example(explanatorySet.size());
@@ -84,22 +80,17 @@ public class Data implements Serializable{
                 }
             }
 
-            try {
-                this.data.add(e);
+            try { this.data.add(e);
             } catch (ArrayIndexOutOfBoundsException exc){
                 throw new TrainingDataException("Numero di esempi maggiore da quanto indicato");
             }
-            try {
-                this.target.add(Double.parseDouble(s[s.length-1]));
+            try { this.target.add(Double.parseDouble(s[s.length-1]));
             } catch (Exception exc) {
-                throw new TrainingDataException(
-                        String.format("Training set privo di variabile target numerica in riga %d", iRow + 1));
+                throw new TrainingDataException("Training set privo di variabile target numerica in riga "+ iRow + 1);
             }
-
             if(iRow ==0 && !sc.hasNextLine()){
                 throw new TrainingDataException("Training set vuoto");
             }
-
             if(!sc.hasNextLine() && iRow<numberOfExamples){
                 throw new TrainingDataException ("Numero di esempi minore da quanto indicato");
             }
@@ -190,15 +181,14 @@ public class Data implements Serializable{
         List<Double> key = new ArrayList<>();
         Example scaledExample = scaledExample(e);
         int i;
+
         for(i = 0; i < this.dataScaled.size(); ++i) {
             key.add(scaledExample.distance(this.dataScaled.get(i)));
         }
 
-        this.quicksort(key, 0, this.dataScaled.size() - 1);
+        quicksort(key, 0, this.dataScaled.size() - 1);
 
-
-        for(i = 0; i < key.size() && key.get(i) < (double)k; ++i) {
-        }
+        for(i = 0; i < key.size() && key.get(i) < (double)k; ++i) {}
         
         return this.avgTillPoint(this.target, i - 1);
     }
@@ -226,16 +216,16 @@ public class Data implements Serializable{
     } 
 
     public Example readExample() {
-        Example e =new Example(numberOfExamples);
+        Example e = new Example(numberOfExamples);
         int i=0;
+        double x;
         for(Attribute a:explanatorySet)    {
             if(a instanceof DiscreteAttribute) {
-                System.out.print("Inserisci valore discreto X["+i+"]:");
+                System.out.print("Inserisci valore discreto X["+i+"]: ");
                 e.set(i, Keyboard.readString());
             } else {
-                double x=0.0;
                 do {
-                    System.out.print("Inserisci valore continuo X["+i+"]:");
+                    System.out.print("Inserisci valore continuo X["+i+"]: ");
                     x=Keyboard.readDouble();
                 } while(new Double(x).equals(Double.NaN));
                 e.set(i,x);
@@ -246,16 +236,16 @@ public class Data implements Serializable{
     }
 
     public String toString(){
-        StringBuilder output = new StringBuilder();
-        String spaziopzionale = " ";
+        StringBuilder sb = new StringBuilder();
+        String space = " ";
         for (int i=0; i<numberOfExamples; i++){
             if (i>9){
-                spaziopzionale = "";
+                space = "";
             }
-            output.append(String.format(
+            sb.append(String.format(
                     Locale.ENGLISH,
-                    "[%d]%s    %s%.1f\n", i, spaziopzionale, data.get(i).toString(), target.get(i)));
+                    "[%d]%s    %s%.1f\n", i, space, data.get(i).toString(), target.get(i)));
         }
-        return output.toString();
+        return sb.toString();
     }
 }
