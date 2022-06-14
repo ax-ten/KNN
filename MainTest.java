@@ -47,7 +47,7 @@ public class MainTest {
 					}
 					while(!flag);			
 					knn=new KNN(trainingSet);
-					try{knn.salva(file+".dmp");}
+					try{knn.salva(LOCALPATH+file+".dmp");}
 					catch(IOException exc) {System.out.println(exc.getMessage());}
 				}
 				break;
@@ -58,7 +58,8 @@ public class MainTest {
 						try {
 							System.out.println("Nome file contenente una serializzazione dell'oggetto KNN:");
 							String file=Keyboard.readString();
-							knn=KNN.carica(LOCALPATH+file+EXT);
+							knn=KNN.carica(LOCALPATH+file+".dmp");
+							System.out.println(knn);
 							flag=true;
 						}
 						catch(IOException | ClassNotFoundException exc){System.out.println(exc.getMessage());}
