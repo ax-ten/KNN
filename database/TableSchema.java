@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import java.sql.Statement;
+
 
 
 
@@ -33,31 +35,29 @@ public class TableSchema implements Iterable<Column>{
 		mapSQL_JAVATypes.put("FLOAT","number");
 		mapSQL_JAVATypes.put("DOUBLE","number");
 		
-		 DatabaseMetaData meta = db.getConnection().getMetaData();
-	     ResultSet res = meta.getColumns(null, null, tableName, null);
-	     
+		DatabaseMetaData meta = db.getConnection().getMetaData();
+
+		ResultSet res = meta.getColumns(null, null, tableName, null);	     
 		   
-	     while (res.next()) {
-	         
-	         if(mapSQL_JAVATypes.containsKey(res.getString("TYPE_NAME")))
-	        	if(res.isLast()) 
+	    while (res.next()) {
+	        if(mapSQL_JAVATypes.containsKey(res.getString("TYPE_NAME"))){
+	        	if(res.isLast()) {
 	        		target=new Column(
-	        				 res.getString("COLUMN_NAME"),
-	        				 mapSQL_JAVATypes.get(res.getString("TYPE_NAME")))
-	        				 ;
-	        	else
-	        		 tableSchema.add(new Column(
-	        				 res.getString("COLUMN_NAME"),
-	        				 mapSQL_JAVATypes.get(res.getString("TYPE_NAME")))
-	        				 );
-	
-	         
-	         
-	      }
-	     
-	      res.close();
-	      if(target==null || tableSchema.size()==0) throw
-				  new InsufficientColumnNumberException("La tabella selezionata contiene meno di due colonne");
+	        				res.getString("COLUMN_NAME"),
+	        				mapSQL_JAVATypes.get(res.getString("TYPE_NAME"))
+							);
+				}
+	        	else{
+	        		tableSchema.add(new Column(
+	        				res.getString("COLUMN_NAME"),
+	        				mapSQL_JAVATypes.get(res.getString("TYPE_NAME")))
+	        				);
+				}
+			}
+	    }
+	    res.close();
+	    if(target==null || tableSchema.size()==0) throw
+				new InsufficientColumnNumberException("La tabella selezionata contiene meno di due colonne");
 		
 		}
 
@@ -84,11 +84,6 @@ public class TableSchema implements Iterable<Column>{
 		@Override
 		public Iterator<Column> iterator() {
 			return tableSchema.iterator();
-		}
-
-		
+		}	
 	}
-
-		     
-
-
+	

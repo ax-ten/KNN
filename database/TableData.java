@@ -77,8 +77,9 @@ public class TableData {
 
 	public Object getAggregateColumnValue(Column column, QUERY_TYPE aggregate) throws SQLException {
 		Statement statement = db.getConnection().createStatement();
-		ResultSet rs = statement.executeQuery("SELECT " +aggregate+ " ("+column+") FROM "+table);
-		return rs.getDouble(0);
+		ResultSet rs = statement.executeQuery("SELECT " +aggregate+ "("+column.getColumnName()+") FROM "+table);
+		rs.next();
+		return rs.getDouble(1);
 	}
 
 	public List getTargetValues(){

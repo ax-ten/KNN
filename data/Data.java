@@ -104,6 +104,7 @@ public class Data implements Serializable{
         data = td.getExamples();
         target = td.getTargetValues();
         this.numberOfExamples = data.size();
+        explanatorySet = new ArrayList<>();
         //dato che il db è molto più statico come struttura ho preferito mettere indici statici anziché cicli for
         explanatorySet.add(new DiscreteAttribute("X", (short) 0));
         explanatorySet.add(new ContinuousAttribute("Y", (short) 1));
