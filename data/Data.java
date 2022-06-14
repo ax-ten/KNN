@@ -65,10 +65,6 @@ public class Data implements Serializable{
             line = sc.nextLine();
             s = line.split(",");
 
-            /*TODO se explanatorySet è un array da due oggetti di cui solo il secondo va cambiato, non è meglio
-               togliere il prossimo ciclo for?
-             */
-
             for (short jColumn = 0; jColumn < s.length - 1; ++jColumn) {
                 if(explanatorySet.get(jColumn) instanceof DiscreteAttribute){
                 e.set(jColumn, s[jColumn]);
@@ -100,18 +96,23 @@ public class Data implements Serializable{
     }
 
     public Data(DbAccess db, String table) throws TrainingDataException, InsufficientColumnNumberException, SQLException {
-        TableData td = new TableData(db, new TableSchema(table, db));
+        TableSchema ts = new TableSchema(table, db);
+        TableData td = new TableData(db, ts);
         data = td.getExamples();
         target = td.getTargetValues();
         this.numberOfExamples = data.size();
         explanatorySet = new ArrayList<>();
-        //dato che il db è molto più statico come struttura ho preferito mettere indici statici anziché cicli for
-        explanatorySet.add(new DiscreteAttribute("X", (short) 0));
-        explanatorySet.add(new ContinuousAttribute("Y", (short) 1));
-        ((ContinuousAttribute) explanatorySet.get(1)).setMin(
-                (Double) td.getAggregateColumnValue(td.getColumn("Y"),QUERY_TYPE.MIN));
-        ((ContinuousAttribute) explanatorySet.get(1)).setMax(
-                (Double) td.getAggregateColumnValue(td.getColumn("Y"),QUERY_TYPE.MAX));
+        int i = 0;
+        for (Column c:ts){
+            if (c.isNumber()){
+                explanatorySet.add(new ContinuousAttribute(c.getColumnName(), (short) i));
+                ((ContinuousAttribute) explanatorySet.get(i)).setMin(
+                    (Double) td.getAggregateColumnValue(c,QUERY_TYPE.MIN));
+                ((ContinuousAttribute) explanatorySet.get(i)).setMax(
+                    (Double) td.getAggregateColumnValue(c,QUERY_TYPE.MAX));
+            }else explanatorySet.add(new DiscreteAttribute(c.getColumnName(), (short) i));
+            i++;
+        }
         scaleData();
     }
 

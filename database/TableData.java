@@ -84,6 +84,5 @@ public class TableData {
 
 	public List getTargetValues(){
 		return target; 
-	}
-	
+	}	
 }
