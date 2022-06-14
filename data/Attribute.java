@@ -4,7 +4,9 @@ package data;
 // (powered by FernFlower decompiler)
 //
 
-public abstract class Attribute {
+import java.io.Serializable;
+
+public abstract class Attribute implements Serializable{
     String name;
     int index;
 
