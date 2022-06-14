@@ -1,11 +1,13 @@
 package data;
-import utility.ExampleSizeException;
+import database.*;
+import example.Example;
+import example.ExampleSizeException;
 import utility.Keyboard;
-import utility.TrainingDataException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.*;
 
 public class Data implements Serializable{
@@ -19,29 +21,31 @@ public class Data implements Serializable{
     public Data(String fileName) throws TrainingDataException {
         File inFile = new File(fileName);
         Scanner sc;
+        String line;
+        String[] s;
+
         try {
             sc = new Scanner(inFile);
+            line = sc.nextLine();
+            if (!line.contains("@schema")) {
+                throw new TrainingDataException("Errore nello schema");
+            }
         } catch (FileNotFoundException exc){
             throw new TrainingDataException("File di training inesistente");
         }
-        String line = sc.nextLine();
 
-        if (!line.contains("@schema")) {
-            throw new TrainingDataException("Errore nello schema");
-        }
-        String[] s = line.split(" ");
-
-        explanatorySet = new ArrayList<>(new Integer(s[1]));
+        explanatorySet = new ArrayList<>();
         short iAttribute = 0;
 
         for(line = sc.nextLine(); !line.contains("@data"); line = sc.nextLine()) {
             s = line.split(" ");
             if (s[0].equals("@desc")){
                 if(s[2].equals("discrete")) {
-                explanatorySet.add(new DiscreteAttribute(s[1], iAttribute));
+                    explanatorySet.add(new DiscreteAttribute(s[1], iAttribute));
                 } else if (s[2].equals("continuous")) {
                     explanatorySet.add(new ContinuousAttribute(s[1], iAttribute));
-                } else throw new TrainingDataException("Attributo di tipo non specificato");
+                } else
+                    throw new TrainingDataException("Attributo di tipo non specificato");
             } else if (s[0].equals("@target")) {
                 this.classAttribute = new ContinuousAttribute(s[1], iAttribute);
             }
@@ -49,12 +53,12 @@ public class Data implements Serializable{
         }
 
         this.numberOfExamples = new Integer(line.split(" ")[1]);
+        this.data = new ArrayList<>(this.numberOfExamples);
+        this.target = new ArrayList<>(this.numberOfExamples);
+
         if (numberOfExamples == 0){
             throw new TrainingDataException("Training set vuoto");
         }
-
-        this.data = new ArrayList<>(this.numberOfExamples);
-        this.target = new ArrayList<>(this.numberOfExamples);
 
         for (short iRow = 1; sc.hasNextLine(); ++iRow) {
             Example e = new Example(explanatorySet.size());
@@ -72,27 +76,43 @@ public class Data implements Serializable{
                 }
             }
 
-            try {
-                this.data.add(e);
+            try { this.data.add(e);
             } catch (ArrayIndexOutOfBoundsException exc){
                 throw new TrainingDataException("Numero di esempi maggiore da quanto indicato");
             }
-            try {
-                this.target.add(Double.parseDouble(s[s.length-1]));
+            try { this.target.add(Double.parseDouble(s[s.length-1]));
             } catch (Exception exc) {
-                throw new TrainingDataException(
-                        String.format("Training set privo di variabile target numerica in riga %d", iRow + 1));
+                throw new TrainingDataException("Training set privo di variabile target numerica in riga "+ iRow + 1);
             }
-
             if(iRow ==0 && !sc.hasNextLine()){
                 throw new TrainingDataException("Training set vuoto");
             }
-
             if(!sc.hasNextLine() && iRow<numberOfExamples){
                 throw new TrainingDataException ("Numero di esempi minore da quanto indicato");
             }
         }
         sc.close();
+        scaleData();
+    }
+
+    public Data(DbAccess db, String table) throws TrainingDataException, InsufficientColumnNumberException, SQLException {
+        TableSchema ts = new TableSchema(table, db);
+        TableData td = new TableData(db, ts);
+        data = td.getExamples();
+        target = td.getTargetValues();
+        this.numberOfExamples = data.size();
+        explanatorySet = new ArrayList<>();
+        int i = 0;
+        for (Column c:ts){
+            if (c.isNumber()){
+                explanatorySet.add(new ContinuousAttribute(c.getColumnName(), (short) i));
+                ((ContinuousAttribute) explanatorySet.get(i)).setMin(
+                    (Double) td.getAggregateColumnValue(c,QUERY_TYPE.MIN));
+                ((ContinuousAttribute) explanatorySet.get(i)).setMax(
+                    (Double) td.getAggregateColumnValue(c,QUERY_TYPE.MAX));
+            }else explanatorySet.add(new DiscreteAttribute(c.getColumnName(), (short) i));
+            i++;
+        }
         scaleData();
     }
 
@@ -163,16 +183,14 @@ public class Data implements Serializable{
         List<Double> key = new ArrayList<>();
         Example scaledExample = scaledExample(e);
         int i;
+
         for(i = 0; i < this.dataScaled.size(); ++i) {
             key.add(scaledExample.distance(this.dataScaled.get(i)));
         }
 
-        this.quicksort(key, 0, this.dataScaled.size() - 1);
+        quicksort(key, 0, this.dataScaled.size() - 1);
 
-        System.out.println(key);
-
-        for(i = 0; i < key.size() && key.get(i) < (double)k; ++i) {
-        }
+        for(i = 0; i < key.size() && key.get(i) < (double)k; ++i) {}
         
         return this.avgTillPoint(this.target, i - 1);
     }
@@ -181,7 +199,6 @@ public class Data implements Serializable{
         double sum = 0.0D;
         for(int i = 0; i <= point; ++i) {
             sum += array.get(i);
-            System.out.println("Sum "+sum);
         }
         return sum / (double)(point + 1);
     }
@@ -201,17 +218,16 @@ public class Data implements Serializable{
     } 
 
     public Example readExample() {
-        Example e =new Example(numberOfExamples);
+        Example e = new Example(numberOfExamples);
         int i=0;
+        double x;
         for(Attribute a:explanatorySet)    {
             if(a instanceof DiscreteAttribute) {
-                System.out.print("Inserisci valore discreto X["+i+"]:");
+                System.out.print("Inserisci valore discreto X["+i+"]: ");
                 e.set(i, Keyboard.readString());
             } else {
-                double x=0.0;
-                //TODO sostituire con while?
                 do {
-                    System.out.print("Inserisci valore continuo X["+i+"]:");
+                    System.out.print("Inserisci valore continuo X["+i+"]: ");
                     x=Keyboard.readDouble();
                 } while(new Double(x).equals(Double.NaN));
                 e.set(i,x);
@@ -222,16 +238,16 @@ public class Data implements Serializable{
     }
 
     public String toString(){
-        StringBuilder output = new StringBuilder();
-        String spaziopzionale = " ";
+        StringBuilder sb = new StringBuilder();
+        String space = " ";
         for (int i=0; i<numberOfExamples; i++){
             if (i>9){
-                spaziopzionale = "";
+                space = "";
             }
-            output.append(String.format(
+            sb.append(String.format(
                     Locale.ENGLISH,
-                    "[%d]%s    %s%.1f\n", i, spaziopzionale, data.get(i).toString(), target.get(i)));
+                    "[%d]%s    %s%.1f\n", i, space, data.get(i).toString(), target.get(i)));
         }
-        return output.toString();
+        return sb.toString();
     }
 }

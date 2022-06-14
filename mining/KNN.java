@@ -7,7 +7,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import data.*;
-import utility.ExampleSizeException;
+import example.Example;
+import example.ExampleSizeException;
 import utility.Keyboard;
 
 
