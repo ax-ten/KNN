@@ -18,7 +18,8 @@ public class MainTest {
 	 */
 	public static void main(String[] args) throws FileNotFoundException, ExampleSizeException {
 		final String LOCALPATH = "Test file/";
-		final String EXT = ".dat";
+		final String TXTEXT = ".dat";
+		final String BINEXT = ".dmp";
 		String menu="";
 		
 		do {
@@ -39,7 +40,7 @@ public class MainTest {
 						try {
 							System.out.println("Nome file contenente un training set valido:");
 							file=Keyboard.readString();
-							trainingSet= new Data(LOCALPATH+file+EXT);
+							trainingSet= new Data(LOCALPATH+file+TXTEXT);
 							System.out.println(trainingSet);
 							flag=true;
 						}
@@ -47,7 +48,7 @@ public class MainTest {
 					}
 					while(!flag);			
 					knn=new KNN(trainingSet);
-					try{knn.salva(LOCALPATH+file+".dmp");}
+					try{knn.salva(LOCALPATH+file+BINEXT);}
 					catch(IOException exc) {System.out.println(exc.getMessage());}
 				}
 				break;
@@ -58,7 +59,7 @@ public class MainTest {
 						try {
 							System.out.println("Nome file contenente una serializzazione dell'oggetto KNN:");
 							String file=Keyboard.readString();
-							knn=KNN.carica(LOCALPATH+file+".dmp");
+							knn=KNN.carica(LOCALPATH+file+BINEXT);
 							System.out.println(knn);
 							flag=true;
 						}
@@ -91,7 +92,7 @@ public class MainTest {
 					while(!flag);			
 					
 					knn=new KNN(trainingSet);
-					try{knn.salva(table+"DB.dmp");}
+					try{knn.salva(LOCALPATH+table+"DB"+BINEXT);}
 					catch(IOException exc) {System.out.println(exc.getMessage());}
 				
 		   }
