@@ -1,4 +1,4 @@
-package client;
+package Client.client;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import utility.Keyboard;
+import Client.utility.Keyboard;
 
 public class Client {
 	
@@ -22,7 +22,6 @@ public class Client {
 	
 	Client (String address, int port) throws IOException, ClassNotFoundException{
 		
-			
 			socket = new Socket(address, port);
 			System.out.println(socket);		
 			out = new ObjectOutputStream(socket.getOutputStream());
@@ -37,7 +36,6 @@ public class Client {
 		
 		do {	
 			do{
-			
 				System.out.println("Load KNN from file [1]");
 				System.out.println("Load KNN from binary file  [2]");
 				System.out.println("Load KNN from database  [3]");
@@ -78,10 +76,9 @@ public class Client {
 								System.out.println(msg);								
 								x=Keyboard.readDouble();
 							}
-							while(new Double(x).equals(Double.NaN));
+							while(Double.valueOf(x).equals(Double.NaN));
 							out.writeObject(x);
-						}
-						
+						}	
 					}
 					else flag=false;
 				}while( flag);
@@ -98,8 +95,6 @@ public class Client {
 				
 				System.out.println("Prediction:"+in.readObject());
 	
-					
-		
 				System.out.println("Vuoi ripetere predizione? Y/N");
 				c=Keyboard.readString();
 				
@@ -108,35 +103,27 @@ public class Client {
 			menu=Keyboard.readString();
 		}
 		while(menu.toLowerCase().equals("y"));
-		
 	}
 	public static void main(String[] args){
-		
-		InetAddress addr;
 		try {
-			addr = InetAddress.getByName(args[0]);
+			InetAddress.getByName(args[0]);
 		} catch (UnknownHostException e) {
 			System.out.println(e.toString());
 			return;
 		}
 		
-		Client c;
 		try {
-			c=new Client(args[0], new Integer(args[1]));
+			new Client(args[0], Integer.valueOf(args[1]));
 			
-		}  catch (IOException e) {
+		}catch (IOException e) {
 			System.out.println(e.toString());
 			return;
-		} catch (NumberFormatException e) {
+		}catch (NumberFormatException e) {
 			System.out.println(e.toString());
 			return;
-		} catch (ClassNotFoundException e) {
+		}catch (ClassNotFoundException e) {
 			System.out.println(e.toString());
 			return;
 		}
 	}
-
-		
-
-
 }
