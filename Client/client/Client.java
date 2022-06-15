@@ -25,7 +25,7 @@ public class Client {
 			socket = new Socket(address, port);
 			System.out.println(socket);		
 			out = new ObjectOutputStream(socket.getOutputStream());
-			in = new ObjectInputStream(socket.getInputStream());	; // stream con richieste del client
+			in = new ObjectInputStream(socket.getInputStream()); // stream con richieste del client
 			talking();
 	}
 	
@@ -37,20 +37,23 @@ public class Client {
 		do {	
 			do{
 				System.out.println("Load KNN from file [1]");
-				System.out.println("Load KNN from binary file  [2]");
-				System.out.println("Load KNN from database  [3]");
+				System.out.println("Load KNN from binary file [2]");
+				System.out.println("Load KNN from database [3]");
 				decision=Keyboard.readInt();
 			}while(decision <0 || decision >3);
 			
 			String risposta="";
 			do {
+				int i = 0;
+				System.out.println("rep "+i);
 				out.writeObject(decision);
 				String tableName="";
 				System.out.println("Table name (without estensione):");
 				tableName=Keyboard.readString();
 				out.writeObject(tableName);
 				risposta=(String)in.readObject();
-			
+				System.out.println(risposta);
+				i++;		
 			}while(risposta.contains("@ERROR"));
 			
 			System.out.println("KNN loaded on the server");
@@ -81,9 +84,9 @@ public class Client {
 						}	
 					}
 					else flag=false;
-				}while( flag);
+				}while(flag);
 				
-				//sto leggendo  k
+				//sto leggendo k
 				risposta=(String)(in.readObject());
 				int k=0;
 				do {
@@ -96,13 +99,14 @@ public class Client {
 				System.out.println("Prediction:"+in.readObject());
 	
 				System.out.println("Vuoi ripetere predizione? Y/N");
-				c=Keyboard.readString();
-				
-			}while (c.toLowerCase().equals("y"));	
+				c=Keyboard.readString();		
+			}while (c.toLowerCase().equals("y"));
+			out.writeObject(c);	
 			System.out.println("Vuoi ripetere una nuova esecuzione con un nuovo oggetto KNN? (Y/N)");
 			menu=Keyboard.readString();
 		}
 		while(menu.toLowerCase().equals("y"));
+		out.writeObject("END");
 	}
 	public static void main(String[] args){
 		try {

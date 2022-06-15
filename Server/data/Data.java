@@ -6,6 +6,9 @@ import Server.utility.Keyboard;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.*;
@@ -235,6 +238,30 @@ public class Data implements Serializable{
             }
             i++;
         }
+        return e;
+    }
+    
+    //TODO
+    public Example readExample(ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException, ClassCastException {
+        Example e = new Example(numberOfExamples);
+        int i=0;
+        double x;
+        for(Attribute a:explanatorySet)    {
+            if(a instanceof DiscreteAttribute) {
+                out.writeObject("@READSTRING");
+                out.writeObject("Inserisci valore discreto X["+i+"]: ");
+                e.set(i, (String) in.readObject());
+            } else {
+                do {
+                    out.writeObject("@READDOUBLE");
+                    out.writeObject("Inserisci valore continuo X["+i+"]: ");
+                    x=(Double)in.readObject();
+                } while(Double.valueOf(x).equals(Double.NaN));
+                e.set(i,x);
+            }
+            i++;
+        }
+        out.writeObject("@ENDEXAMPLE");
         return e;
     }
 

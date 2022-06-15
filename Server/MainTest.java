@@ -97,7 +97,7 @@ public class MainTest {
 					knn=new KNN(trainingSet);
 					try{knn.salva(LOCALPATH+table+"DB"+BINEXT);}
 					catch(IOException exc) {System.out.println(exc.getMessage());}
-				
+				break;
 		   }
 			
 			// predict

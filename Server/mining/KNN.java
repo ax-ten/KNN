@@ -30,6 +30,15 @@ public class KNN implements Serializable{
         return this.data.avgClosest(e, k);
     }
 
+    public Double predict (ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException, ClassCastException, ExampleSizeException {
+        System.out.println("Read Example");
+        Example e = data.readExample(out,in);
+        int k=0;
+        out.writeObject("Inserisci valore k>=1:");
+        k=(Integer)(in.readObject());
+        return data.avgClosest(e, k);
+    }
+
     public void salva(String nomeFile) throws IOException {
         ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(nomeFile));
         out.writeObject(this);
