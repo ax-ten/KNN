@@ -1,4 +1,4 @@
-package example;
+package Server.example;
 
 import java.io.Serializable;
 import java.util.*;

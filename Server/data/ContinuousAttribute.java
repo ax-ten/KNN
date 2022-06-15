@@ -1,4 +1,4 @@
-package data;
+package Server.data;
 
 public class ContinuousAttribute extends Attribute {
 

@@ -1,16 +1,17 @@
+package Server;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import data.Data;
-import data.TrainingDataException;
-import database.DatabaseConnectionException;
-import database.DbAccess;
-import database.InsufficientColumnNumberException;
-import database.NoValueException;
-import example.ExampleSizeException;
-import mining.KNN;
-import utility.Keyboard;
+import Server.data.Data;
+import Server.data.TrainingDataException;
+import Server.database.DatabaseConnectionException;
+import Server.database.DbAccess;
+import Server.database.InsufficientColumnNumberException;
+import Server.database.NoValueException;
+import Server.example.ExampleSizeException;
+import Server.mining.KNN;
+import Server.utility.Keyboard;
 
 public class MainTest {
 
@@ -19,7 +20,7 @@ public class MainTest {
 	 * @throws NoValueException
 	 */
 	public static void main(String[] args) throws FileNotFoundException, ExampleSizeException, NoValueException {
-		final String LOCALPATH = "Test file/";
+		final String LOCALPATH = "Server/Test file/";
 		final String TXTEXT = ".dat";
 		final String BINEXT = ".dmp";
 		String menu="";

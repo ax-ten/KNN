@@ -1,4 +1,4 @@
-package database;
+package Server.database;
 
 public class NoValueException extends Exception {
 	
