@@ -7,6 +7,7 @@ import data.TrainingDataException;
 import database.DatabaseConnectionException;
 import database.DbAccess;
 import database.InsufficientColumnNumberException;
+import database.NoValueException;
 import example.ExampleSizeException;
 import mining.KNN;
 import utility.Keyboard;
@@ -15,8 +16,9 @@ public class MainTest {
 
 	/**
 	 * @param args
+	 * @throws NoValueException
 	 */
-	public static void main(String[] args) throws FileNotFoundException, ExampleSizeException {
+	public static void main(String[] args) throws FileNotFoundException, ExampleSizeException, NoValueException {
 		final String LOCALPATH = "Test file/";
 		final String TXTEXT = ".dat";
 		final String BINEXT = ".dmp";

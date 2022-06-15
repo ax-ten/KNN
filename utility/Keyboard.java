@@ -241,7 +241,7 @@ public class Keyboard {
 		String token = getNextToken();
 		float value;
 		try {
-			value = (new Float(token)).floatValue();
+			value = (Float.valueOf(token)).floatValue();
 		} catch (Exception exception) {
 			error("Error reading float data, NaN value returned.");
 			value = Float.NaN;
@@ -256,7 +256,7 @@ public class Keyboard {
 		String token = getNextToken();
 		double value;
 		try {
-			value = (new Double(token)).doubleValue();
+			value = (Double.valueOf(token)).doubleValue();
 		} catch (Exception exception) {
 			error("Error reading double data, NaN value returned.");
 			value = Double.NaN;

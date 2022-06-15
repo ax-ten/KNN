@@ -1,16 +1,12 @@
 package database;
 
-import java.sql.Connection;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-
 
 import example.Example;
 
@@ -20,15 +16,15 @@ public class TableData {
 	private String table;
 	private TableSchema tSchema;
 	private List<Example> transSet;
-	private List target;
+	private List<Double> target;
 	
 	
-	public TableData(DbAccess db, TableSchema tSchema) throws SQLException,InsufficientColumnNumberException{
+	public TableData(DbAccess db, TableSchema tSchema) throws SQLException,InsufficientColumnNumberException, NoValueException{
 		this.db=db;
 		this.tSchema=tSchema;
 		this.table=tSchema.getTableName();
-		transSet = new ArrayList();
-		target= new ArrayList();	
+		transSet = new ArrayList<Example>();
+		target= new ArrayList<Double>();	
 		init();
 	}
 
@@ -36,11 +32,10 @@ public class TableData {
 		return this.tSchema.getColumn(columnName);
 	}
 
-	private void init() throws SQLException{		
+	private void init() throws SQLException, NoValueException{		
 		String query="select ";
 		int i=0;
 		
-		Iterator<Column> it=tSchema.iterator();
 		for(Column c:tSchema){			
 			query += c.getColumnName();
 			query+=",";
@@ -65,7 +60,8 @@ public class TableData {
 			if(tSchema.target().isNumber())
 				target.add(rs.getDouble(tSchema.target().getColumnName()));
 			else
-				target.add(rs.getString(tSchema.target().getColumnName()));
+				//target.add(rs.getString(tSchema.target().getColumnName()));
+				throw new NoValueException("Target value is discrete");
 		}
 		rs.close();
 		statement.close();	
@@ -82,7 +78,7 @@ public class TableData {
 		return rs.getDouble(1);
 	}
 
-	public List getTargetValues(){
+	public List<Double> getTargetValues(){
 		return target; 
 	}	
 }
