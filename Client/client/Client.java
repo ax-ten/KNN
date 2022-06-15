@@ -44,16 +44,13 @@ public class Client {
 			
 			String risposta="";
 			do {
-				int i = 0;
-				System.out.println("rep "+i);
 				out.writeObject(decision);
 				String tableName="";
-				System.out.println("Table name (without estensione):");
+				System.out.println("Table name (without extension):");
 				tableName=Keyboard.readString();
 				out.writeObject(tableName);
 				risposta=(String)in.readObject();
 				System.out.println(risposta);
-				i++;		
 			}while(risposta.contains("@ERROR"));
 			
 			System.out.println("KNN loaded on the server");
@@ -90,19 +87,19 @@ public class Client {
 				risposta=(String)(in.readObject());
 				int k=0;
 				do {
-					System.out.print(risposta);
+					System.out.println(risposta);
 					k=Keyboard.readInt();
 				}while (k<1);
 				out.writeObject(k);
 				//aspetto la predizione 
 				
-				System.out.println("Prediction:"+in.readObject());
+				System.out.println("Prediction: "+in.readObject());
 	
-				System.out.println("Vuoi ripetere predizione? Y/N");
+				System.out.println("Do you want to make another prediction? Y/N");
 				c=Keyboard.readString();		
 			}while (c.toLowerCase().equals("y"));
 			out.writeObject(c);	
-			System.out.println("Vuoi ripetere una nuova esecuzione con un nuovo oggetto KNN? (Y/N)");
+			System.out.println("So you want to repeat a new execution with a new KNN object? (Y/N)");
 			menu=Keyboard.readString();
 		}
 		while(menu.toLowerCase().equals("y"));

@@ -241,7 +241,6 @@ public class Data implements Serializable{
         return e;
     }
     
-    //TODO
     public Example readExample(ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException, ClassCastException {
         Example e = new Example(numberOfExamples);
         int i=0;

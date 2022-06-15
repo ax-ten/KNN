@@ -1,9 +1,6 @@
 package Server.server;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -129,10 +126,8 @@ public class ServerOneClient extends Thread{
                     e.printStackTrace();
                     System.err.println("IO Exception");
                 } catch (ClassNotFoundException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (ExampleSizeException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } finally {
                 try {
