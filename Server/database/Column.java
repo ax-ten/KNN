@@ -1,4 +1,4 @@
-package Server.database;
+package database;
 
 public class Column{
 	private String name;

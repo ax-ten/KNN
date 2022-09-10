@@ -15,7 +15,8 @@ public class Client {
 	private ObjectOutputStream out=null;
 	private ObjectInputStream in=null;
 	/**
-	 * @param args
+	 * @param address
+	 * @param port
 	 * @throws IOException 
 	 * @throws ClassNotFoundException 
 	 */

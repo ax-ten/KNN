@@ -1,4 +1,4 @@
-package Server.server;
+package server;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -6,14 +6,14 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.SQLException;
 
-import Server.data.Data;
-import Server.data.TrainingDataException;
-import Server.database.DatabaseConnectionException;
-import Server.database.DbAccess;
-import Server.database.InsufficientColumnNumberException;
-import Server.database.NoValueException;
-import Server.example.ExampleSizeException;
-import Server.mining.KNN;
+import data.Data;
+import data.TrainingDataException;
+import database.DatabaseConnectionException;
+import database.DbAccess;
+import database.InsufficientColumnNumberException;
+import database.NoValueException;
+import example.ExampleSizeException;
+import mining.KNN;
 
 public class ServerOneClient extends Thread{
     

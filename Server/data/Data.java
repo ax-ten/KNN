@@ -1,7 +1,6 @@
-package Server.data;
-import Server.database.*;
-import Server.example.Example;
-import Server.example.ExampleSizeException;
+package data;
+import database.*;
+import example.*;
 import Server.utility.Keyboard;
 
 import java.io.File;
