@@ -1,4 +1,4 @@
-package example;
+package main.example;
 
 public class ExampleSizeException extends  Exception {
     //da sollevare nei metodi swap e

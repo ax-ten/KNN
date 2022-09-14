@@ -1,4 +1,4 @@
-package data;
+package main.data;
 
 public class TrainingDataException extends Exception{
     //per gestire il caso di acquisizione errata
