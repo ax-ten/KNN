@@ -1,5 +1,6 @@
 package server;
 
+import telegrambot.InvalidBotException;
 import telegrambot.SimpleBot;
 
 import java.io.IOException;
