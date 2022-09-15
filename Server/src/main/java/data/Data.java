@@ -1,7 +1,7 @@
-package main.data;
-import main.database.*;
-import main.example.*;
-import main.utility.Keyboard;
+package data;
+import database.*;
+import example.*;
+import utility.Keyboard;
 
 import java.io.File;
 import java.io.FileNotFoundException;

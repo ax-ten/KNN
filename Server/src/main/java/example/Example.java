@@ -1,4 +1,4 @@
-package main.example;
+package example;
 
 import java.io.Serializable;
 import java.util.*;

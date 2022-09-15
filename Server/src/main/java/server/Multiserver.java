@@ -1,4 +1,6 @@
-package main.server;
+package server;
+
+import telegrambot.SimpleBot;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -17,6 +19,7 @@ public class Multiserver {
     }
 
     public static void main(String[] args){
+        new SimpleBot();
         new Multiserver(Integer.valueOf(args[0]));
     }
 

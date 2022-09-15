@@ -5,7 +5,7 @@
 //  parsing, conversions, and exception handling.
 //********************************************************************
 
-package main.utility;
+package utility;
 
 import java.io.*;
 import java.util.*;

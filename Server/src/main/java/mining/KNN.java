@@ -1,4 +1,4 @@
-package main.mining;
+package mining;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -6,9 +6,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import main.data.*;
-import main.example.*;
-import main.utility.Keyboard;
+import data.*;
+import example.*;
+import utility.Keyboard;
 
 
 
