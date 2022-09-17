@@ -8,7 +8,6 @@ import pro.zackpollard.telegrambot.api.event.Listener;
 import pro.zackpollard.telegrambot.api.event.chat.message.CommandMessageReceivedEvent;
 import pro.zackpollard.telegrambot.api.event.chat.message.TextMessageReceivedEvent;
 import utility.DataUtility;
-import utility.KNNUtility;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -57,8 +56,12 @@ public class SimpleBot {
     private class MyListener implements Listener {
 
         final String LOCALPATH = "src/main/Testfile/";
-        final String TXTEXT = ".dat";
         final String BINEXT = ".dmp";
+
+        @Override
+        public void onTextMessageReceived(TextMessageReceivedEvent event) {
+            Listener.super.onTextMessageReceived(event);
+        }
 
         @Override
         public void onCommandMessageReceived(CommandMessageReceivedEvent event) {
@@ -69,16 +72,16 @@ public class SimpleBot {
                 e.printStackTrace();
             }
             Data trainingSet;
-            KNN knn = null;
+            KNN knn;
             try {
                 switch (event.getCommand().toLowerCase(Locale.ROOT)) {
                     case "loadknnfromfile":
-                        trainingSet = DataUtility.getTrainingSetFromDat(addMissingExtention(filename, TXTEXT));
+                        trainingSet = DataUtility.getTrainingSetFromDat(filename);
                         reply(event,trainingSet.toString());
                         new KNN(trainingSet).salva(LOCALPATH + filename + BINEXT); //Save KNN to binary
                         break;
                     case "loadknnfrombinary":
-                        knn = KNNUtility.loadKNNFromBin(addMissingExtention(filename, BINEXT));
+                        knn = DataUtility.loadKNNFromBin(filename);
                         reply(event,knn.toString());
                         break;
                     case "loadknnfromdb":
@@ -86,6 +89,8 @@ public class SimpleBot {
                         reply(event,trainingSet.toString());
                         new KNN(trainingSet).salva(LOCALPATH+filename+"DB"+BINEXT); //Save KNN to binary
                         break;
+                    default:
+                        reply(event,"Comando non riconosciuto");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
