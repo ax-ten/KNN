@@ -15,6 +15,8 @@ import utility.Keyboard;
 public class KNN implements Serializable{
     Data data;
 
+    public KNN(){}
+
     public KNN(Data trainingSet) {
         this.data = trainingSet;
     }
@@ -45,7 +47,7 @@ public class KNN implements Serializable{
         out.close();
     }
 
-    public static KNN carica(String nomeFile) throws IOException,ClassNotFoundException {
+    public KNN carica(String nomeFile) throws IOException,ClassNotFoundException {
         ObjectInputStream in = new ObjectInputStream(new FileInputStream(nomeFile));
         KNN knn=(KNN)in.readObject();
         knn.data=(Data)in.readObject();

@@ -4,13 +4,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.sql.SQLException;
+import java.util.Objects;
 
 import data.Data;
-import data.TrainingDataException;
-import database.*;
 import example.ExampleSizeException;
 import mining.KNN;
+import utility.DataUtility;
+import utility.KNNUtility;
+
+import static utility.DataUtility.addMissingExtention;
 
 public class ServerOneClient extends Thread{
     
@@ -36,75 +38,39 @@ public class ServerOneClient extends Thread{
     public void run(){
         try {
             while (true) {
+                String filename = ".", tablename = ".";
                 KNN knn=null;
+                Data trainingSet;
                 String str = in.readObject().toString();
-                if (str.equals("END")) break;
+                if (str.equals("")) break;
                 switch (str) {
                     case "1":{
                         System.out.println("Echoing: Load KNN from file");
-                        boolean flag=false;
-                        Data trainingSet=null;
-                        String file="";
-                        do {			
-                            try {
-                                file=in.readObject().toString();
-                                System.out.println("Nome file richiesto: "+LOCALPATH+file+TXTEXT);
-                                trainingSet= new Data(LOCALPATH+file+TXTEXT);
-                                out.writeObject(trainingSet.toString());
-                                System.out.println(trainingSet);
-                                flag=true;
-                            }
-                            catch(TrainingDataException exc){System.out.println(exc.getMessage());}
-                        }while(!flag);			
-                        knn=new KNN(trainingSet);
-                        try{knn.salva(LOCALPATH+file+BINEXT);
-                        }catch(IOException exc) {System.out.println(exc.getMessage());}
+                        while (!Objects.equals(filename, "")) {
+                            filename = in.readObject().toString();
+                            trainingSet = DataUtility.getTrainingSetFromDat(addMissingExtention(filename,TXTEXT));
+                            out.writeObject(trainingSet.toString());
+                            new KNN(trainingSet).salva(LOCALPATH+filename+BINEXT); //Save KNN to binary
                         }
+                    }
                     break;
 				    case "2":{
                         System.out.println("Echoing: Load KNN from binary file");
-                        boolean flag=false;
-                        do {			
-                            try {
-                                String file=in.readObject().toString();
-                                System.out.println("Nome file richiesto: "+LOCALPATH+file+TXTEXT);
-                                knn=KNN.carica(LOCALPATH+file+BINEXT);
-                                out.writeObject(knn.toString());
-                                System.out.println(knn);
-                                flag=true;
-                            }
-                            catch(IOException | ClassNotFoundException exc){System.out.println(exc.getMessage());}
+                        while (!Objects.equals(filename, "")) {
+                            filename = addMissingExtention(in.readObject().toString(), BINEXT);
+                            knn = KNNUtility.loadKNNFromBin(filename);
+                            out.writeObject(knn.toString());
                         }
-                        while(!flag);		
                     }
                     break;
                     case "3":{
                         System.out.println("Echoing: Load KNN from database");
-                        Data trainingSet=null;
-                        String table="";
-                        boolean flag=false;
-                        do {			
-                            try {
-                                System.out.print("Connecting to DB...");
-                                DbAccess db=new DbAccess();
-                                System.out.println("done!");
-                                table = in.readObject().toString();
-                                System.out.println("Nome tabella: "+ table);							
-                                trainingSet=new Data(db,table);
-                                out.writeObject(trainingSet.toString());
-                                System.out.println(trainingSet);
-                                flag=true;
-                                db.closeConnection();
-                            }
-                            catch(InsufficientColumnNumberException | SQLException | TrainingDataException | DatabaseConnectionException | NoValueException exc){
-                                System.out.println(exc.getMessage());
-                            }
+                        while (!Objects.equals(tablename, "")) {
+                            tablename = in.readObject().toString();
+                            trainingSet = DataUtility.getTrainingSetFromDB(tablename);
+                            out.writeObject(trainingSet.toString());
+                            new KNN(trainingSet).salva(LOCALPATH+tablename+"DB"+BINEXT); //Save KNN to binary
                         }
-                        while(!flag);			
-                        
-                        knn=new KNN(trainingSet);
-                        try{knn.salva(LOCALPATH+table+"DB"+BINEXT);}
-                        catch(IOException exc) {System.out.println(exc.getMessage());}
                     }
                     break;
                 }
@@ -116,24 +82,20 @@ public class ServerOneClient extends Thread{
                     out.writeObject(prediction);
                     predict = in.readObject().toString();
                 }
-
             }
-                System.out.println("closing...");
-                } catch(IOException e) {
-                    e.printStackTrace();
-                    System.err.println("IO Exception");
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                } catch (ExampleSizeException e) {
-                    e.printStackTrace();
-                } finally {
-                try {
-                    socket.close();
-                } catch(IOException e) {
-                    System.err.println("Socket not closed");
+            System.out.println("closing...");
+            } catch(IOException | ClassNotFoundException | ExampleSizeException e) {
+                e.printStackTrace();
+            } finally {
+            try {
+                socket.close();
+            } catch(IOException e) {
+                System.err.println("Socket not closed");
             }
         }
     }
-            
+
+
+
 }
 
