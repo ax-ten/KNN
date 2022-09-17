@@ -239,6 +239,21 @@ public class Data implements Serializable{
         }
         return e;
     }
+
+    public Example parseExample(String[] in) throws ExampleSizeException, NumberFormatException {
+        Example e = new Example(numberOfExamples);
+        if (numberOfExamples != in.length) throw new ExampleSizeException();
+        int i=0;
+        for (Attribute a:explanatorySet){
+            if(a instanceof ContinuousAttribute) {
+                e.set(i, Double.parseDouble(in[i]));
+            } else {
+                e.set(i, in[i]);
+            }
+            i++;
+        }
+        return e;
+    }
     
     public Example readExample(ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException, ClassCastException {
         Example e = new Example(numberOfExamples);

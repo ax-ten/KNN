@@ -18,3 +18,41 @@ B,5,10
 B,12,10
 B,14,10
 A,1,1
+
+inserire l'esempio di predict nel seguente formato:
+[D] [C] [K]
+
+
+[tabella = null]
+/loadknnfromfile provaC
+
+[tabella = provaC]
+scrivere Example in formato [a] [b] [c] [K]
+o chiedere una nuova tabella
+
+/loadknnfromfile provaD
+
+[tabella = provaD]
+scrivere Example in formato [a] [b] [c] [d] [K]
+[C]: continuo
+[D]: discreto
+[K]: target
+o chiedere una nuova tabella
+
+[a] [b] [c] [K]
+
+Formato incorretto,
+scrivere Example in formato [D],[C],[C],[D],[K]
+[C]: continuo
+[D]: discreto
+[K]: target
+o chiedere una nuova tabella
+
+[a] [b] [c] [d] [K]
+
+prediction: p
+
+A,B,2
+A
+B
+2

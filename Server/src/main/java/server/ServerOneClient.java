@@ -10,7 +10,6 @@ import data.Data;
 import example.ExampleSizeException;
 import mining.KNN;
 import utility.DataUtility;
-import utility.KNNUtility;
 
 import static utility.DataUtility.addMissingExtention;
 
@@ -52,17 +51,17 @@ public class ServerOneClient extends Thread{
                             out.writeObject(trainingSet.toString());
                             new KNN(trainingSet).salva(LOCALPATH+filename+BINEXT); //Save KNN to binary
                         }
+                        break;
                     }
-                    break;
 				    case "2":{
                         System.out.println("Echoing: Load KNN from binary file");
                         while (!Objects.equals(filename, "")) {
                             filename = addMissingExtention(in.readObject().toString(), BINEXT);
-                            knn = KNNUtility.loadKNNFromBin(filename);
+                            knn = DataUtility.loadKNNFromBin(filename);
                             out.writeObject(knn.toString());
                         }
+                        break;
                     }
-                    break;
                     case "3":{
                         System.out.println("Echoing: Load KNN from database");
                         while (!Objects.equals(tablename, "")) {
@@ -71,8 +70,8 @@ public class ServerOneClient extends Thread{
                             out.writeObject(trainingSet.toString());
                             new KNN(trainingSet).salva(LOCALPATH+tablename+"DB"+BINEXT); //Save KNN to binary
                         }
+                        break;
                     }
-                    break;
                 }
                 //prediction
                 String predict = in.readObject().toString();

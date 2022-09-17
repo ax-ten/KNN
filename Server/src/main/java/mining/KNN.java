@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 
 import data.*;
 import example.*;
@@ -29,6 +30,13 @@ public class KNN implements Serializable{
             k=Keyboard.readInt();
         }while (k<1);
         return this.data.avgClosest(e, k);
+    }
+
+    public Double predict(String in) throws ExampleSizeException {
+        String args[] = in.split(",");
+        int k = Integer.parseInt(args[args.length-1]);
+        Example e = data.parseExample(Arrays.copyOf(args, args.length-1));
+        return  data.avgClosest(e,k);
     }
 
     public Double predict (ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException, ClassCastException, ExampleSizeException {
