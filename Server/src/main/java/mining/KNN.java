@@ -63,7 +63,7 @@ public class KNN implements Serializable{
         return knn;
     }
 
-    public String toString(){
-        return data.toString();
+    public Data getData(){
+        return  data;
     }
 }

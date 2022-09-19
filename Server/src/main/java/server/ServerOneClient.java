@@ -49,7 +49,8 @@ public class ServerOneClient extends Thread{
                             filename = in.readObject().toString();
                             trainingSet = DataUtility.getTrainingSetFromDat(addMissingExtention(filename,TXTEXT));
                             out.writeObject(trainingSet.toString());
-                            new KNN(trainingSet).salva(LOCALPATH+filename+BINEXT); //Save KNN to binary
+                            knn = new KNN(trainingSet); //Save KNN to binary
+                            knn.salva(LOCALPATH+tablename+"DB"+BINEXT);
                         }
                         break;
                     }
@@ -58,7 +59,7 @@ public class ServerOneClient extends Thread{
                         while (!Objects.equals(filename, "")) {
                             filename = addMissingExtention(in.readObject().toString(), BINEXT);
                             knn = DataUtility.loadKNNFromBin(filename);
-                            out.writeObject(knn.toString());
+                            out.writeObject(knn.getData().toString());
                         }
                         break;
                     }
@@ -68,7 +69,8 @@ public class ServerOneClient extends Thread{
                             tablename = in.readObject().toString();
                             trainingSet = DataUtility.getTrainingSetFromDB(tablename);
                             out.writeObject(trainingSet.toString());
-                            new KNN(trainingSet).salva(LOCALPATH+tablename+"DB"+BINEXT); //Save KNN to binary
+                            knn = new KNN(trainingSet); //Save KNN to binary
+                            knn.salva(LOCALPATH+tablename+"DB"+BINEXT);
                         }
                         break;
                     }
