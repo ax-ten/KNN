@@ -181,6 +181,20 @@ public class Data implements Serializable{
     public List<Attribute> getExplanatorySet(){
         return explanatorySet;
     }
+    
+    public String explanatorySetStringBuilder(){
+        //[C],[D],[C],[K]
+        String out ="";
+        int eSize = getNumberOfExplanatoryAttributes();
+        for (int i=0; i < eSize; i++){
+            if(explanatorySet.get(i) instanceof DiscreteAttribute){
+                out= out + "[D],";
+            } else if (explanatorySet.get(i) instanceof ContinuousAttribute){
+                out= out + "[C],";
+            }
+        }
+        return out+"[K]";
+    }
 
     public double avgClosest(Example e, int k) throws ExampleSizeException {
         List<Double> key = new ArrayList<>();
@@ -240,15 +254,15 @@ public class Data implements Serializable{
         return e;
     }
 
-    public Example parseExample(String[] in) throws ExampleSizeException, NumberFormatException {
-        Example e = new Example(numberOfExamples);
-        if (numberOfExamples != in.length) throw new ExampleSizeException();
+    public Example parseExample(String[] attributes) throws ExampleSizeException, NumberFormatException {
+        if (explanatorySet.size() != attributes.length) throw new ExampleSizeException();
+        Example e = new Example(explanatorySet.size());
         int i=0;
         for (Attribute a:explanatorySet){
             if(a instanceof ContinuousAttribute) {
-                e.set(i, Double.parseDouble(in[i]));
+                e.set(i, Double.parseDouble(attributes[i]));
             } else {
-                e.set(i, in[i]);
+                e.set(i, attributes[i]);
             }
             i++;
         }
@@ -263,7 +277,7 @@ public class Data implements Serializable{
             if(a instanceof DiscreteAttribute) {
                 out.writeObject("@READSTRING");
                 out.writeObject("Inserisci valore discreto X["+i+"]: ");
-                e.set(i, (String) in.readObject());
+                e.set(i,in.readObject());
             } else {
                 do {
                     out.writeObject("@READDOUBLE");
