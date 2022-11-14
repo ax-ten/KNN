@@ -1,7 +1,7 @@
 package data;
 import database.*;
 import example.*;
-import Server.utility.Keyboard;
+import utility.Keyboard;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,6 +17,7 @@ public class Data implements Serializable{
     private List<Example> dataScaled;
     private List<Double> target;
     int numberOfExamples;
+    private String err;
     private List<Attribute> explanatorySet;
     ContinuousAttribute classAttribute;
 
@@ -24,6 +25,7 @@ public class Data implements Serializable{
         File inFile = new File(fileName);
         String line;
         String[] s;
+        this.err = "";
 
         try (Scanner sc = new Scanner(inFile)){
             line = sc.nextLine();
@@ -181,6 +183,19 @@ public class Data implements Serializable{
     public List<Attribute> getExplanatorySet(){
         return explanatorySet;
     }
+    
+    public String explanatorySetStringBuilder(){
+        String out ="";
+        int eSize = getNumberOfExplanatoryAttributes();
+        for (int i=0; i < eSize; i++){
+            if(explanatorySet.get(i) instanceof DiscreteAttribute){
+                out= out + "[D],";
+            } else if (explanatorySet.get(i) instanceof ContinuousAttribute){
+                out= out + "[C],";
+            }
+        }
+        return out+"[K]";
+    }
 
     public double avgClosest(Example e, int k) throws ExampleSizeException {
         List<Double> key = new ArrayList<>();
@@ -239,6 +254,21 @@ public class Data implements Serializable{
         }
         return e;
     }
+
+    public Example parseExample(String[] attributes) throws ExampleSizeException, NumberFormatException {
+        if (explanatorySet.size() != attributes.length) throw new ExampleSizeException();
+        Example e = new Example(explanatorySet.size());
+        int i=0;
+        for (Attribute a:explanatorySet){
+            if(a instanceof ContinuousAttribute) {
+                e.set(i, Double.parseDouble(attributes[i]));
+            } else {
+                e.set(i, attributes[i]);
+            }
+            i++;
+        }
+        return e;
+    }
     
     public Example readExample(ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException, ClassCastException {
         Example e = new Example(numberOfExamples);
@@ -248,7 +278,7 @@ public class Data implements Serializable{
             if(a instanceof DiscreteAttribute) {
                 out.writeObject("@READSTRING");
                 out.writeObject("Inserisci valore discreto X["+i+"]: ");
-                e.set(i, (String) in.readObject());
+                e.set(i,in.readObject());
             } else {
                 do {
                     out.writeObject("@READDOUBLE");
@@ -265,9 +295,11 @@ public class Data implements Serializable{
 
     public String toString(){
         StringBuilder sb = new StringBuilder();
-        String space = " ";
+        String space = "  ";
         for (int i=0; i<numberOfExamples; i++){
             if (i>9){
+                space = " ";
+            } else if (i >99){
                 space = "";
             }
             sb.append(String.format(
@@ -276,4 +308,31 @@ public class Data implements Serializable{
         }
         return sb.toString();
     }
+
+    public LinkedList<String> toTgMessage(){
+        final int max = 1000;
+        String backt = "```",
+                appendable,
+                space = "  ";
+        StringBuilder sb = new StringBuilder(backt);
+        LinkedList<String> messages = new LinkedList<>();
+        for(int i=0; i<numberOfExamples; i++){
+            if (i > 9)  space = " ";
+            if (i >99)  space = "";
+            appendable = String.format(
+                    Locale.ENGLISH,
+                    " [%d]%s    %s%.1f\n", i, space, data.get(i).toString(), target.get(i));
+            if (sb.length() + appendable.length() < max)
+                sb.append(appendable);
+            else {
+                messages.add(sb.toString() + backt);
+                sb = new StringBuilder(backt);
+                sb.append(appendable);
+            }
+        }
+        sb.append(backt);
+        messages.add(sb.toString());
+        return messages;
+    }
+
 }

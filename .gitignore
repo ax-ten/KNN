@@ -2,3 +2,7 @@
 Client/.idea/
 
 .idea/
+
+Server/build/
+
+Server/.gradle/

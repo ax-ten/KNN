@@ -5,16 +5,18 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 
 import data.*;
-import example.Example;
-import example.ExampleSizeException;
-import Server.utility.Keyboard;
+import example.*;
+import utility.Keyboard;
 
 
 
 public class KNN implements Serializable{
     Data data;
+
+    public KNN(){}
 
     public KNN(Data trainingSet) {
         this.data = trainingSet;
@@ -30,31 +32,38 @@ public class KNN implements Serializable{
         return this.data.avgClosest(e, k);
     }
 
+    public Double predict(String in) throws ExampleSizeException {
+        String args[] = in.split(",");
+        int k;
+        try{
+            k = Integer.parseInt(args[args.length - 1]);
+        } catch (NumberFormatException e){throw new ExampleSizeException();}
+        Example e = data.parseExample(Arrays.copyOf(args, args.length-1));
+        return  data.avgClosest(e,k);
+    }
+
     public Double predict (ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException, ClassCastException, ExampleSizeException {
         System.out.println("Read Example");
         Example e = data.readExample(out,in);
-        int k=0;
         out.writeObject("Inserisci valore k>=1: ");
-        k=(Integer)(in.readObject());
+        int k=(Integer)(in.readObject());
         return data.avgClosest(e, k);
     }
 
     public void salva(String nomeFile) throws IOException {
         ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(nomeFile));
-        out.writeObject(this);
         out.writeObject(data);
         out.close();
     }
 
-    public static KNN carica(String nomeFile) throws IOException,ClassNotFoundException {
+    public KNN carica(String nomeFile) throws IOException,ClassNotFoundException {
         ObjectInputStream in = new ObjectInputStream(new FileInputStream(nomeFile));
-        KNN knn=(KNN)in.readObject();
-        knn.data=(Data)in.readObject();
+        this.data=(Data)in.readObject();
         in.close();
-        return knn;
+        return this;
     }
 
-    public String toString(){
-        return data.toString();
+    public Data getData(){
+        return  data;
     }
 }
