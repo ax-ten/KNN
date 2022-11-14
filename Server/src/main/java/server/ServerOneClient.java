@@ -4,15 +4,23 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.Objects;
 
 import data.Data;
+import data.TrainingDataException;
+import database.DatabaseConnectionException;
+import database.InsufficientColumnNumberException;
+import database.NoValueException;
 import example.ExampleSizeException;
 import mining.KNN;
 import utility.DataUtility;
 
 import static utility.DataUtility.addMissingExtention;
 
+/**
+ *
+ */
 public class ServerOneClient extends Thread{
     
     final String LOCALPATH = "Server/Test file/";
@@ -75,7 +83,7 @@ public class ServerOneClient extends Thread{
                         break;
                     }
                 }
-                //prediction
+                //predict
                 String predict = in.readObject().toString();
                 while(predict.equals("4")){
                     System.out.println("Start prediction");
@@ -85,9 +93,10 @@ public class ServerOneClient extends Thread{
                 }
             }
             System.out.println("closing...");
-            } catch(IOException | ClassNotFoundException | ExampleSizeException e) {
-                e.printStackTrace();
-            } finally {
+        } catch(IOException | ClassNotFoundException | ExampleSizeException | TrainingDataException |
+                DatabaseConnectionException | NoValueException | SQLException | InsufficientColumnNumberException e) {
+            e.printStackTrace();
+        } finally {
             try {
                 socket.close();
             } catch(IOException e) {
@@ -95,8 +104,6 @@ public class ServerOneClient extends Thread{
             }
         }
     }
-
-
 
 }
 

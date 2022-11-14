@@ -52,7 +52,7 @@ public class Example implements Serializable{
     public String toString(){
         StringBuilder output = new StringBuilder();
         for (int i=0;i<this.getSize();i++){
-            output.append(String.format("%s,", this.example.get(i)));
+            output.append(String.format("%s, ", this.example.get(i)));
         }
         return output.toString();
     }
