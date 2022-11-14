@@ -7,7 +7,6 @@ import java.sql.SQLException;
 /**
  * Gestisce l'accesso al DB per la lettura dei dati di training
  * @author Map Tutor
- *
  */
 public class DbAccess {
 
@@ -30,18 +29,23 @@ public class DbAccess {
 
 		try {
 			conn = DriverManager.getConnection(connectionString, USER_ID, PASSWORD);
-			
 		} catch (SQLException e) {
 			System.out.println("Impossibile connettersi al DB");
 			e.printStackTrace();
 			throw new DatabaseConnectionException(e.toString());
 		}
-		
 	}
+
+	/**
+	 * @return connessione al DB
+	 */
 	public  Connection getConnection(){
 		return conn;
 	}
 
+	/**
+	 * Chiudi connessione al DB
+	 */
 	public  void closeConnection() {
 		try {
 			conn.close();

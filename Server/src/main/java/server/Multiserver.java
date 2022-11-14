@@ -31,7 +31,7 @@ public class Multiserver {
             // Si blocca finchè non si verifica una connessione:
                 Socket socket = s.accept();
                 try {
-                    new ServerOneClient(socket);
+                    new ServeOneClient(socket);
                 }catch(IOException e) {
                     // Se fallisce chiude il socket,
                     // altrimenti il thread la chiuderà:

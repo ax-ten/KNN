@@ -9,13 +9,22 @@ import java.util.Iterator;
 import java.util.List;
 
 
+/**
+ * Gestisce i metedati di una tabella
+ */
 public class TableSchema implements Iterable<Column>{
 	
-	private List<Column> tableSchema=new ArrayList<Column>();
+	private final List<Column> tableSchema=new ArrayList<>();
 	private Column target;
-	private String tableName;
-	
-	
+	private final String tableName;
+
+
+	/** Crea uno Schema di una tabella ottenuta tramite nome e gestore DB
+	 * @param tableName nome della tabella
+	 * @param db gestore accesso DB
+	 * @throws SQLException se ci sono errori nelle query SQL
+	 * @throws InsufficientColumnNumberException se ci sono meno di due colonne nella tabella
+	 */
 	public TableSchema(String tableName, DbAccess db) throws SQLException,InsufficientColumnNumberException{
 		this.tableName=tableName;
 		
@@ -65,21 +74,33 @@ public class TableSchema implements Iterable<Column>{
 			return null;
 		}
 
-		public Column target(){
-			return target;
-		}
-		
-		int getNumberOfAttributes() {
-			return tableSchema.size();
-		}
-		
-		String getTableName() {
-			return tableName;
-		}
+	/**
+	* @return colonna target
+	*/
+	public Column target(){
+		return target;
+	}
 
-		@Override
-		public Iterator<Column> iterator() {
+	/**
+	* @return numero di colonne nella tabella
+	*/
+	int getNumberOfAttributes() {
+		return tableSchema.size();
+	}
+
+	/**
+	* @return nome della tabella
+	*/
+	String getTableName() {
+		return tableName;
+	}
+
+	/**
+	 * @return iteratore tra le colonne
+	 */
+	@Override
+	public Iterator<Column> iterator() {
 			return tableSchema.iterator();
 		}	
-	}
+}
 	

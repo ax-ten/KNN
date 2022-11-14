@@ -11,7 +11,6 @@ import pro.zackpollard.telegrambot.api.TelegramBot;
 import pro.zackpollard.telegrambot.api.chat.Chat;
 import pro.zackpollard.telegrambot.api.chat.message.send.ParseMode;
 import pro.zackpollard.telegrambot.api.chat.message.send.SendableTextMessage;
-import pro.zackpollard.telegrambot.api.event.Event;
 import pro.zackpollard.telegrambot.api.event.Listener;
 import pro.zackpollard.telegrambot.api.event.chat.message.CommandMessageReceivedEvent;
 import pro.zackpollard.telegrambot.api.event.chat.message.DocumentMessageReceivedEvent;
@@ -25,10 +24,19 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
-import static java.util.Objects.isNull;
-import static utility.DataUtility.addMissingExtention;
-
+/**
+ * Bot necessario ad interfacciare un utente tramite la piattaforma di Telegram.
+ * È in grado di gestire richieste su database precedentemente caricati sulla macchina, aggiungere nuovi dataset,
+ * risolvere prediction da parte dell'utente e in caso questo non sia possibile, segnalare l'errore, tutto via chat.
+ *
+ * Apre un thread che ricava autonomamente il suo socket in comunicazione coi server telegram, sui quali effettua
+ * polling per ottenere nuovi eventi chat, che gestisce autonomamente.
+ */
 public class SimpleBot {
+    /**
+     * Crea istanza del bot telegram
+     * Ottiene chiave di autenticazione dal file AUTHKEY.txt, la convalida, registra il listener e inizia il polling.
+     */
     public SimpleBot(){
         Scanner s = null;
         try {
@@ -36,7 +44,6 @@ public class SimpleBot {
         } catch (FileNotFoundException e) {e.printStackTrace();}
 
         final String KEY = s.nextLine();
-
         TelegramBot tb = TelegramBot.login(KEY);
 
         try{
@@ -51,31 +58,42 @@ public class SimpleBot {
         //If you specify false the API will discard any messages from before the bot was started.
         tb.startUpdates(false);
         System.out.println("Bot Started");
-
-        //Thread would die, do something to keep it alive.
     }
 
+    /**
+     * @param tb istanza del bot
+     * @throws InvalidBotException se la chiave non è valida
+     */
     private void convalidateAPIKey(TelegramBot tb) throws InvalidBotException {
         if (tb == null){
-            throw new InvalidBotException();
+            throw new InvalidBotException("chiave di autenticazione non valida");
         }
     }
 
-    //Listener class
-    public static class MyListener implements Listener {
+    /**
+     * Modella il listener del bot
+     */
+    private static class MyListener implements Listener {
         final String LOCALPATH = "src/main/Testfile/";
         final String BINEXT = ".dmp";
-        private HashMap<String, KNN> userData = new LinkedHashMap<>();
-        //String: Chatid / Data: trainingset salvato
+        private HashMap<String, KNN> userData = new LinkedHashMap<>(); //String: Chatid / Data: trainingset
+        // ad ogni utente è associato un trainingset, nel momento in cui ne caricano un altro questo viene aggiornato.
 
+        /**
+         *  Listener dei messaggi testuali
+         * Elabora messaggi che non contengono comandi, ma solo query sul quale effettuare prediction.
+         * Può farlo solo dopo che sia stata caricata una knn in userData.
+         * @param event ricezione di un messaggio
+         */
         @Override
         public void onTextMessageReceived(TextMessageReceivedEvent event) {
-            // i comandi sono considerati textmessages, tutti i comandi iniziano per '/', per cui
-            // escludiamo tutti i messaggi che iniziano così
-            if (event.getMessage().toString().charAt(0)=='/'){return;}
             String chatID = event.getChat().getId();
             KNN knn;
             Double prediction;
+
+            // i comandi sono considerati textmessages, tutti i comandi iniziano per '/', per cui
+            // escludiamo tutti i messaggi che iniziano così
+            if (event.getMessage().toString().charAt(0)=='/'){return;}
 
             // se l'utente ha registrato dei knn nel suo userdata (associato al suo id), ottieni il knn da lì
             if (userData.containsKey(chatID)){
@@ -85,17 +103,23 @@ public class SimpleBot {
                     // per un'altra predizione sullo stesso knn
                     prediction = knn.predict(event.getContent().getContent());
                     reply(event,"Prediction: "+prediction);
-                    sendMessage(event.getChat(),exampleFormatBuilder(knn));
+                    sendMessage(event.getChat(),exampleFormatBuilder(knn.getData()));
                 } catch (ExampleSizeException | NumberFormatException e) {
                     // se il formato di predizione non è valido avvisa l'utente e richiede nuovamente lo stesso format
                     e.printStackTrace();
-                    reply(event,"Formato non valido.\n" +exampleFormatBuilder(knn));
+                    reply(event,"Formato non valido.\n" +exampleFormatBuilder(knn.getData()));
                 }
             } else
                 // altrimenti richiedi di caricare un file
                 event.getChat().sendMessage("Carica un trainingset per procedere.");
         }
 
+        /**
+         * Listener dei messaggi con file allegato
+         * Elabora file ricevuti via chat, li salva in userData e manda un messaggio con la query dell'example da ricevere
+         * basato sul file ricevuto.
+         * @param event ricezione di un documento
+         */
         @Override
         public void onDocumentMessageReceived(DocumentMessageReceivedEvent event) {
             Data trainingSet;
@@ -108,7 +132,7 @@ public class SimpleBot {
                 trainingSet = DataUtility.getTrainingSetFromDat(filename);
                 KNN knn = new KNN(trainingSet);
                 reply(event,knn.getData().toTgMessage());
-                sendMessage(event.getChat(),exampleFormatBuilder(knn));
+                sendMessage(event.getChat(),exampleFormatBuilder(knn.getData()));
                 userData.put(event.getChat().getId(),knn);
             } catch (TrainingDataException e) {
                 e.printStackTrace();
@@ -117,7 +141,16 @@ public class SimpleBot {
         }
 
 
-
+        /**
+         * Listener dei comandi
+         * Gestisce i comandi impartiti dall'utente via chat:
+         *      loadfile - carica un trainingset da un file .dat salvato sul server
+         *      loadddb - carica un trainingset da un database salvato sul server
+         *      loadbinary - carica un trainingset da un file .dat salvato sul server
+         *      listfiles - elenca i file presenti sul server
+         *      start - presenta all'utente le varie funzioni del bot
+         * @param event ricezione di un comando
+         */
         @Override
         public void onCommandMessageReceived(CommandMessageReceivedEvent event) {
             String
@@ -144,7 +177,7 @@ public class SimpleBot {
                         flag_save = true;
                         break;
                     case "loadbinary":
-                        knn = DataUtility.loadKNNFromBin(filename);
+                        knn =  new KNN(DataUtility.getTrainingSetFromDmp(filename));
                         flag_load = true;
                         break;
                     case "listfiles":
@@ -187,7 +220,7 @@ public class SimpleBot {
             }
 
             if (flag_load || flag_save) {
-                sendMessage(event.getChat(),exampleFormatBuilder(knn) );
+                sendMessage(event.getChat(),exampleFormatBuilder(knn.getData()) );
                 reply(event, knn.getData().toTgMessage());
                 userData.put(chatID, knn);
             }
@@ -201,11 +234,19 @@ public class SimpleBot {
             }
         }
 
+        /**
+         * @param e evento al quale rispondere
+         * @param s lista di messaggi da inviare come risposta
+         */
         private void reply(MessageReceivedEvent e, List<String> s){
             for (String message : s)
                 reply(e, message);
         }
 
+        /**
+         * @param e evento al quale rispondere
+         * @param s messaggio da inviare come risposta
+         */
         private void reply(MessageReceivedEvent e, String s){
             e.getChat().sendMessage(SendableTextMessage.builder()
                     .parseMode(ParseMode.MARKDOWN)
@@ -214,6 +255,10 @@ public class SimpleBot {
                     .build());
         }
 
+        /**
+         * @param c chat nel quale mandare il messaggio
+         * @param s messaggio da inviare
+         */
         private void sendMessage(Chat c, String s){
             c.sendMessage(SendableTextMessage.builder()
                     .parseMode(ParseMode.MARKDOWN)
@@ -221,9 +266,16 @@ public class SimpleBot {
                     .build());
         }
 
-        private String exampleFormatBuilder(KNN knn){
+        /**
+         * Builder di una stringa di linguaggio ad alto livello per mostrare all'utente come
+         * immettere correttamente i valori
+         *
+         * @param d trainingset sul quale creare il prototipo
+         * @return stringa leggibile e formattata con markdown
+         */
+        private String exampleFormatBuilder(Data d){
             return "Per procedere scrivere l'example in formato: \n`"+
-                    knn.getData().explanatorySetStringBuilder() +
+                    d.explanatorySetStringBuilder() +
                     "`\n`[C]`: Attributo continuo\n`[D]`: Attributo discreto\n`[K]`: Example target" +
                     "\nOppure caricare un nuovo training set utilizzando gli appositi comandi.";
         }
