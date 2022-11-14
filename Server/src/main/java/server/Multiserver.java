@@ -8,20 +8,19 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Multiserver {
-    private int PORT = 2025;
+    private static int PORT = 2025;
 
     public Multiserver(int port){
-        this.PORT = port;
+        PORT = port;
         run();
-    }
-
-    public Multiserver(){
-        new Multiserver(PORT);
     }
 
     public static void main(String[] args){
         new SimpleBot();
-        new Multiserver(Integer.valueOf(args[0]));
+        if (args.length>0)
+            new Multiserver(Integer.valueOf(args[0]));
+        else
+            new Multiserver(PORT);
     }
 
     private void run(){
