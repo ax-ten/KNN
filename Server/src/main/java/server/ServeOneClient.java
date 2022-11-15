@@ -19,19 +19,19 @@ import utility.DataUtility;
 import static utility.DataUtility.addMissingExtention;
 
 /**
- *
+ * @author Losito Nicola Dario
  */
-public class ServerOneClient extends Thread{
+public class ServeOneClient extends Thread{
     
-    final String LOCALPATH = "Server/Test file/";
-    final String TXTEXT = ".dat";
-    final String BINEXT = ".dmp";
+    private final String LOCALPATH = "Server/Test file/";
+    private final String TXTEXT = ".dat";
+    private final String BINEXT = ".dmp";
 
     private Socket socket;
     private ObjectInputStream in; 
     private ObjectOutputStream out;
 
-    public ServerOneClient(Socket s) throws IOException{
+    public ServeOneClient(Socket s) throws IOException{
         try{
         socket = s;
         in = new ObjectInputStream(socket.getInputStream());
@@ -66,7 +66,7 @@ public class ServerOneClient extends Thread{
                         System.out.println("Echoing: Load KNN from binary file");
                         while (!Objects.equals(filename, "")) {
                             filename = addMissingExtention(in.readObject().toString(), BINEXT);
-                            knn = DataUtility.loadKNNFromBin(filename);
+                            knn = new KNN(DataUtility.getTrainingSetFromDmp(filename));
                             out.writeObject(knn.getData().toString());
                         }
                         break;

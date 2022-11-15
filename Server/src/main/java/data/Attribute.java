@@ -6,19 +6,32 @@ package data;
 
 import java.io.Serializable;
 
+/**
+ * Modella un generico attributo discreto o continuo.
+ */
 public abstract class Attribute implements Serializable{
-    String name;
-    int index;
+    private final String name;
+    private final int index;
 
+    /**
+     * @param name nome simbolico dell'attributo
+     * @param index identificativo numerico dell'attributo
+     */
     public Attribute(String name, int index) {
         this.name = name;
         this.index = index;
     }
 
+    /**
+     * @return il valore del membro name
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * @return il valore del membro index
+     */
     public int getIndex() {
         return this.index;
     }

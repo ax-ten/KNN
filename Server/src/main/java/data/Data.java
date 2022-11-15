@@ -3,29 +3,31 @@ import database.*;
 import example.*;
 import utility.Keyboard;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.sql.SQLException;
 import java.util.*;
 
+/**
+ * Modella il training set
+ */
 public class Data implements Serializable{
     private List<Example> data;
     private List<Example> dataScaled;
     private List<Double> target;
-    int numberOfExamples;
-    private String err;
+    private int numberOfExamples;
     private List<Attribute> explanatorySet;
-    ContinuousAttribute classAttribute;
 
+    /**
+     * crea un trainingset modellato sul file passato come parametro
+     * @param fileName path del file .dat da caricare (e.g. src/main/Testfile/provac.dat)
+     * @throws TrainingDataException se il file non è valido: se è vuoto, c'è un errore nello schema
+     *                se il tipo di attributo non è specificato, se il numero di esempi è diverso da quanto
+     *                indicato.
+     */
     public Data(String fileName) throws TrainingDataException {
         File inFile = new File(fileName);
         String line;
         String[] s;
-        this.err = "";
 
         try (Scanner sc = new Scanner(inFile)){
             line = sc.nextLine();
@@ -48,13 +50,11 @@ public class Data implements Serializable{
                         sc.close();
                         throw new TrainingDataException("Attributo di tipo non specificato");
                     }
-                } else if (s[0].equals("@target")) {
-                    this.classAttribute = new ContinuousAttribute(s[1], iAttribute);
                 }
                 ++iAttribute;
             }
 
-            this.numberOfExamples = Integer.valueOf(line.split(" ")[1]);
+            this.numberOfExamples = Integer.parseInt(line.split(" ")[1]);
             this.data = new ArrayList<>(this.numberOfExamples);
             this.target = new ArrayList<>(this.numberOfExamples);
 
@@ -100,8 +100,18 @@ public class Data implements Serializable{
         }
     }
 
-    public Data(DbAccess db, String table) throws TrainingDataException, InsufficientColumnNumberException, SQLException, NoValueException {
-        TableSchema ts = new TableSchema(table, db);
+    /**
+     * crea un trainingset modellato su database e tabella passati come parametro
+     * @param db istanza del gestore di database
+     * @param tableName nome della tabella sul quale è salvata la lista di Example
+     * @throws TrainingDataException se la tabella non è traslabile in trainingSet
+     * @throws InsufficientColumnNumberException se il database è vuoto
+     * @throws SQLException qualsiasi errore di compilazione sql
+     * @throws NoValueException se il database è vuoto
+     */
+    public Data(DbAccess db, String tableName)
+            throws TrainingDataException, InsufficientColumnNumberException, SQLException, NoValueException {
+        TableSchema ts = new TableSchema(tableName, db);
         TableData td = new TableData(db, ts);
         data = td.getExamples();
         target = td.getTargetValues();
@@ -121,6 +131,71 @@ public class Data implements Serializable{
         scaleData();
     }
 
+    /**
+     * Crea un Esempio della stessa dimensione del primo esempio nel dataset
+     * in base all'ordine e al tipo degli Attribute dell'Example viene chiesto all'utente tramite Keyboard
+     * di inserire un valore discreto o continuo
+     * @return l'esempio creato tramite Keyboard
+     */
+    public Example readExample() {
+        Example e = new Example(getExampleSize());
+        int i=0;
+        double x;
+        for(Attribute a:getExplanatorySet())    {
+            if(a instanceof DiscreteAttribute) {
+                System.out.print("Inserisci valore discreto X["+i+"]: ");
+                e.set(i, Keyboard.readString());
+            } else {
+                do {
+                    System.out.print("Inserisci valore continuo X["+i+"]: ");
+                    x=Keyboard.readDouble();
+                } while(Double.valueOf(x).equals(Double.NaN));
+                e.set(i,x);
+            }
+            i++;
+        }
+        return e;
+    }
+
+    /**
+     * crea un Esempio della stessa dimensione del primo esempio nel dataset
+     * in base all'ordine al tipo degli Attribute dell'Example viene chiesto all'utente tramite input stream
+     * di inserire valori discreti o continui.
+     * @param out terminale sul quale vengono mandati i prompt
+     * @param in input del terminale di interfaccia
+     * @return l'esempio creato
+     * @throws IOException se ci sono errori di Input/Output
+     * @throws ClassNotFoundException  se è inserito un valore discreto non valido
+     * @throws ClassCastException se è inserito un valore continuo non valido
+     */
+    public Example readExample(ObjectOutputStream out, ObjectInputStream in)
+            throws IOException, ClassNotFoundException, ClassCastException {
+        Example e = new Example(getExampleSize());
+        int i=0;
+        double x;
+        for(Attribute a:getExplanatorySet())    {
+            if(a instanceof DiscreteAttribute) {
+                out.writeObject("@READSTRING");
+                out.writeObject("Inserisci valore discreto X["+i+"]: ");
+                e.set(i,in.readObject());
+            } else {
+                do {
+                    out.writeObject("@READDOUBLE");
+                    out.writeObject("Inserisci valore continuo X["+i+"]: ");
+                    x=(Double)in.readObject();
+                } while(Double.valueOf(x).equals(Double.NaN));
+                e.set(i,x);
+            }
+            i++;
+        }
+        out.writeObject("@ENDEXAMPLE");
+        return e;
+    }
+
+    /**
+     * istanza dataScaled di questa classe, creando una copia dei valori, che se continui vengono scalati in
+     * valori che vanno da 0 a 1, in base al valore originale
+     */
     private void scaleData(){
         this.dataScaled = new ArrayList<>(data.size());
         for (int i = 0; i < data.size(); i++){
@@ -128,7 +203,16 @@ public class Data implements Serializable{
         }
     }
 
-    private int partition(List<Double> key, int inf, int sup) throws ExampleSizeException {
+    /**
+     * ordina e ripartisce gli elementi di dataScaled, target e key in base ai parametri inf e sup
+     * in accordo ai valori contenuti in key
+     *
+     * @param key #todo
+     * @param inf indice inferiore
+     * @param sup indice superiore
+     * @return #todo
+     */
+    private int partition(List<Double> key, int inf, int sup)  {
         int i = inf;
         int j = sup;
         int med = (inf + sup) / 2;
@@ -159,7 +243,14 @@ public class Data implements Serializable{
         }
     }
 
-    private void quicksort(List<Double> key, int inf, int sup) throws ExampleSizeException {
+    /**
+     * ordina data, target e key in accordo ai valori contenuti in key.
+     * Se sup<inf non ha alcun effetto.
+     * @param key lista di valori che stabiliscono l'ordine di dataScaled e target
+     * @param inf indice di posizione inferiore
+     * @param sup indice di posizione superiore
+     */
+    private void quicksort(List<Double> key, int inf, int sup)  {
         if (sup >= inf) {
             int pos = this.partition(key, inf, sup);
             if (pos - inf < sup - pos + 1) {
@@ -172,18 +263,31 @@ public class Data implements Serializable{
         }
     }
 
+    /**
+     * @return dimensione del primo Example in data
+     */
     public int getExampleSize(){
         return data.get(0).getSize();
     }
-    
+
+    /**
+     * @return la dimensione dell'explanatorySet
+     */
     public int getNumberOfExplanatoryAttributes() {
         return this.explanatorySet.size();
     }
 
+    /**
+     * @return explanatorySet
+     */
     public List<Attribute> getExplanatorySet(){
         return explanatorySet;
     }
-    
+
+    /** Restituisce una stringa ad alto linguaggio, (e.g.: [D],[D],[C],[K]") sulla quale l'utente si basa
+     * per chiedere le predizioni
+     * @return stringa rappresentativa dell'explanatorySet
+     */
     public String explanatorySetStringBuilder(){
         String out ="";
         int eSize = getNumberOfExplanatoryAttributes();
@@ -197,6 +301,13 @@ public class Data implements Serializable{
         return out+"[K]";
     }
 
+    /**
+     * Avvalora key con le distanze calcolate tra ciascuna istanza di Example memorizzata in data ed e
+     * @param e example di riferimento
+     * @param k distanza massima tra e ed il vettore target
+     * @return la media dei valori precedenti al k-esimo dopo aver ordinato target
+     * @throws ExampleSizeException
+     */
     public double avgClosest(Example e, int k) throws ExampleSizeException {
         List<Double> key = new ArrayList<>();
         Example scaledExample = scaledExample(e);
@@ -208,20 +319,30 @@ public class Data implements Serializable{
 
         quicksort(key, 0, this.dataScaled.size() - 1);
 
+        // il body di for è vuoto perché la sua unica funzione è di aumentare i finché non rispetta la condizione
         for(i = 0; i < key.size() && key.get(i) < (double)k; ++i) {}
         
         return this.avgTillPoint(this.target, i - 1);
     }
 
-    private double avgTillPoint(List<Double> array, int point) {
+    /** Funzione privata che restituisce la media aritmetica di solo i primi elementi di una lista
+     * @param l lista dal quale ottenere la media
+     * @param point indice (incluso) dell'elemento ultimo da cui ottenere la media aritmentica
+     * @return
+     */
+    private double avgTillPoint(List<Double> l, int point) {
         double sum = 0.0D;
         for(int i = 0; i <= point; ++i) {
-            sum += array.get(i);
+            sum += l.get(i);
         }
         return sum / (double)(point + 1);
     }
 
-    //Restituisce nuova istanza di Example con valori discreti inalterati e valori continui scalati tra 0 e 1
+    /**  Restituisce nuova istanza di Example con valori discreti inalterati e valori continui
+     *   scalati tra 0 e 1 in base alla funzione scale
+     * @param e Example da copiare e scalare
+     * @return Example scalato
+     */
     Example scaledExample (Example e) {
         int eSize = e.getSize();
         Example example = new Example(eSize);
@@ -233,66 +354,11 @@ public class Data implements Serializable{
             }
         }
         return example;
-    } 
-
-    public Example readExample() {
-        Example e = new Example(numberOfExamples);
-        int i=0;
-        double x;
-        for(Attribute a:explanatorySet)    {
-            if(a instanceof DiscreteAttribute) {
-                System.out.print("Inserisci valore discreto X["+i+"]: ");
-                e.set(i, Keyboard.readString());
-            } else {
-                do {
-                    System.out.print("Inserisci valore continuo X["+i+"]: ");
-                    x=Keyboard.readDouble();
-                } while(Double.valueOf(x).equals(Double.NaN));
-                e.set(i,x);
-            }
-            i++;
-        }
-        return e;
     }
 
-    public Example parseExample(String[] attributes) throws ExampleSizeException, NumberFormatException {
-        if (explanatorySet.size() != attributes.length) throw new ExampleSizeException();
-        Example e = new Example(explanatorySet.size());
-        int i=0;
-        for (Attribute a:explanatorySet){
-            if(a instanceof ContinuousAttribute) {
-                e.set(i, Double.parseDouble(attributes[i]));
-            } else {
-                e.set(i, attributes[i]);
-            }
-            i++;
-        }
-        return e;
-    }
-    
-    public Example readExample(ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException, ClassCastException {
-        Example e = new Example(numberOfExamples);
-        int i=0;
-        double x;
-        for(Attribute a:explanatorySet)    {
-            if(a instanceof DiscreteAttribute) {
-                out.writeObject("@READSTRING");
-                out.writeObject("Inserisci valore discreto X["+i+"]: ");
-                e.set(i,in.readObject());
-            } else {
-                do {
-                    out.writeObject("@READDOUBLE");
-                    out.writeObject("Inserisci valore continuo X["+i+"]: ");
-                    x=(Double)in.readObject();
-                } while(Double.valueOf(x).equals(Double.NaN));
-                e.set(i,x);
-            }
-            i++;
-        }
-        out.writeObject("@ENDEXAMPLE");
-        return e;
-    }
-
+    /** builder di Stringa ad alto linguaggio che descrive ogni riga del dataset (e.g.: [1]   3.0,A,2)
+     * @return stringa di dataset formattato e leggibile
+     */
     public String toString(){
         StringBuilder sb = new StringBuilder();
         String space = "  ";
@@ -309,6 +375,11 @@ public class Data implements Serializable{
         return sb.toString();
     }
 
+    /**
+     * Builder di Stringa ad alto linguaggio che descrive ogni riga del dataset (e.g.: [1]   3.0,A,2).
+     * Separa ogni @max caratteri, per permettere di inviare messaggi con capacità limitata
+     * @return lista di stringhe del dataset formattato e leggibile
+     */
     public LinkedList<String> toTgMessage(){
         final int max = 1000;
         String backt = "```",
