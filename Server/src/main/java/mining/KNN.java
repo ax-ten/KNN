@@ -57,7 +57,7 @@ public class KNN implements Serializable{
         try{
             k = Integer.parseInt(args[args.length - 1]);
         } catch (NumberFormatException e){throw new ExampleSizeException();}
-        Example e = parseExample(Arrays.copyOf(args, args.length-1));
+        Example e = new Example(Arrays.copyOf(args, args.length-1));
         return  trainingSet.avgClosest(e,k);
     }
 
@@ -105,28 +105,6 @@ public class KNN implements Serializable{
         this.trainingSet=(Data)in.readObject();
         in.close();
         return this;
-    }
-
-    /**
-     * @param attributes lista di stringhe, ognuna corrispondente ad un attributo
-     * @return Esempio costruito su attributes
-     * @throws ExampleSizeException se la lunghezza di attributes è diversa dal numero di attributi del trainingset
-     * @throws NumberFormatException se non è possibile ottenere un valore reale quando richiesto
-     */
-    public Example parseExample(String[] attributes) throws ExampleSizeException, NumberFormatException {
-        if (trainingSet.getNumberOfExplanatoryAttributes() != attributes.length)
-            throw new ExampleSizeException();
-        Example e = new Example(trainingSet.getNumberOfExplanatoryAttributes());
-        int i=0;
-        for (Attribute a:trainingSet.getExplanatorySet()){
-            if(a instanceof ContinuousAttribute) {
-                e.set(i, Double.parseDouble(attributes[i]));
-            } else {
-                e.set(i, attributes[i]);
-            }
-            i++;
-        }
-        return e;
     }
 
     /**

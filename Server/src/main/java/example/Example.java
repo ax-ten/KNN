@@ -1,5 +1,8 @@
 package example;
 
+import data.Attribute;
+import data.ContinuousAttribute;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -17,6 +20,25 @@ public class Example implements Serializable{
     public Example(int size) {
         this.example = new ArrayList<>(size);
         this.size = size;
+    }
+
+
+
+    /**
+     * @param attributes lista di stringhe, ognuna corrispondente ad un attributo
+     * @throws NumberFormatException se il parsing del double non è possibile
+     */
+    public Example (String[] attributes) throws  NumberFormatException {
+        this(attributes.length);
+        int i=0;
+        for (Object a:this.example){
+            if(a instanceof ContinuousAttribute) {
+                this.set(i, Double.parseDouble(attributes[i]));
+            } else {
+                this.set(i, attributes[i]);
+            }
+            i++;
+        }
     }
 
     /**
