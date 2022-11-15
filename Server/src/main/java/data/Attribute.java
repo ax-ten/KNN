@@ -10,8 +10,8 @@ import java.io.Serializable;
  * Modella un generico attributo discreto o continuo.
  */
 public abstract class Attribute implements Serializable{
-    String name;
-    int index;
+    private final String name;
+    private final int index;
 
     /**
      * @param name nome simbolico dell'attributo

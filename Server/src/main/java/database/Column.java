@@ -5,8 +5,8 @@ package database;
  * @author Losito Nicola Dario
  */
 public class Column{
-	private String name;
-	private String type;
+	private final String name;
+	private final String type;
 
 	/**
 	 * @param name nome simbolico della colonna

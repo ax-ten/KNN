@@ -14,9 +14,9 @@ import example.Example;
  */
 public class TableData {
 
-	private DbAccess db;
+	private final DbAccess db;
 	private String table;
-	private TableSchema tSchema;
+	private final TableSchema tSchema;
 	private List<Example> transSet;
 	private List<Double> target;
 

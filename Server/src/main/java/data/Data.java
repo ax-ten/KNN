@@ -14,10 +14,8 @@ public class Data implements Serializable{
     private List<Example> data;
     private List<Example> dataScaled;
     private List<Double> target;
-    int numberOfExamples;
-    private String err;
+    private int numberOfExamples;
     private List<Attribute> explanatorySet;
-    ContinuousAttribute classAttribute;
 
     /**
      * crea un trainingset modellato sul file passato come parametro
@@ -30,7 +28,6 @@ public class Data implements Serializable{
         File inFile = new File(fileName);
         String line;
         String[] s;
-        this.err = "";
 
         try (Scanner sc = new Scanner(inFile)){
             line = sc.nextLine();
@@ -53,8 +50,6 @@ public class Data implements Serializable{
                         sc.close();
                         throw new TrainingDataException("Attributo di tipo non specificato");
                     }
-                } else if (s[0].equals("@target")) {
-                    this.classAttribute = new ContinuousAttribute(s[1], iAttribute);
                 }
                 ++iAttribute;
             }

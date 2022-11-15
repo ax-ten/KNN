@@ -16,7 +16,7 @@ import utility.Keyboard;
  * #todo
  */
 public class KNN implements Serializable{
-    Data trainingSet;
+    private Data trainingSet;
 
     /**
      * Crea istanza KNN vuota
@@ -32,7 +32,7 @@ public class KNN implements Serializable{
 
     /**
      * @return la predizione basata su un Esempio costruito via terminale
-     * @throws ExampleSizeException
+     * @throws ExampleSizeException se l'esempio inserito non è valido
      */
     public Double predict() throws ExampleSizeException {
         Example e = trainingSet.readExample();

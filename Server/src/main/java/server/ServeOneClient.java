@@ -19,13 +19,13 @@ import utility.DataUtility;
 import static utility.DataUtility.addMissingExtention;
 
 /**
- *
+ * @author Losito Nicola Dario
  */
 public class ServeOneClient extends Thread{
     
-    final String LOCALPATH = "Server/Test file/";
-    final String TXTEXT = ".dat";
-    final String BINEXT = ".dmp";
+    private final String LOCALPATH = "Server/Test file/";
+    private final String TXTEXT = ".dat";
+    private final String BINEXT = ".dmp";
 
     private Socket socket;
     private ObjectInputStream in; 

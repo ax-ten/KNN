@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class Example implements Serializable{
     private List<Object> example;
-    int size;
+    private int size;
 
     /**
      * @param size dimensione dell'Example
