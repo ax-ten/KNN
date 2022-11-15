@@ -9,6 +9,10 @@ import java.net.UnknownHostException;
 
 import Client.utility.Keyboard;
 
+/**
+ * Modella il client
+ * @author Losito Nicola Dario
+ */
 public class Client {
 	
 	private Socket socket=null;
@@ -21,8 +25,7 @@ public class Client {
 	 * @throws ClassNotFoundException 
 	 */
 	
-	Client (String address, int port) throws IOException, ClassNotFoundException{
-		
+	public Client (String address, int port) throws IOException, ClassNotFoundException{
 			socket = new Socket(address, port);
 			System.out.println(socket);		
 			out = new ObjectOutputStream(socket.getOutputStream());

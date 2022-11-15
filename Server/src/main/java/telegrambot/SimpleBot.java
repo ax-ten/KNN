@@ -25,8 +25,8 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * Bot necessario ad interfacciare un utente tramite la piattaforma di Telegram.
- * È in grado di gestire richieste su database precedentemente caricati sulla macchina, aggiungere nuovi dataset,
+ * Bot necessario ad interfacciare un utente tramite la piattaforma client di Telegram.
+ * È in grado di gestire richieste su trainingset precedentemente caricati sulla macchina, aggiungere nuovi dataset,
  * risolvere prediction da parte dell'utente e in caso questo non sia possibile, segnalare l'errore, tutto via chat.
  *
  * Apre un thread che ricava autonomamente il suo socket in comunicazione coi server telegram, sui quali effettua
@@ -161,11 +161,13 @@ public class SimpleBot {
                 flag_save = false,
                 flag_load = false;
             KNN knn = null;
+
             try {
                 filename = event.getArgs()[0];
             } catch (NullPointerException | ArrayIndexOutOfBoundsException e) {
                 System.out.println(e);
             }
+
             try {
                 switch (command) {
                     case "loadfile":
@@ -197,10 +199,10 @@ public class SimpleBot {
                         reply(event,"Comando non riconosciuto");
                 }
 
-            } catch (NullPointerException | ArrayIndexOutOfBoundsException | IOException | ClassNotFoundException e){
+            } catch (NullPointerException | ArrayIndexOutOfBoundsException | ClassNotFoundException e){
                 e.printStackTrace();
                 //flag_save = false;
-            } catch (TrainingDataException e) {
+            } catch (TrainingDataException | IOException e) {
                 e.printStackTrace();
                 if (Objects.equals(filename, ""))
                     reply(event, "Specifica il nome del file da caricare dopo il comando, ad esempio ` /loadfile provac`");
@@ -220,8 +222,8 @@ public class SimpleBot {
             }
 
             if (flag_load || flag_save) {
-                sendMessage(event.getChat(),exampleFormatBuilder(knn.getData()) );
                 reply(event, knn.getData().toTgMessage());
+                sendMessage(event.getChat(),exampleFormatBuilder(knn.getData()) );
                 userData.put(chatID, knn);
             }
             if (flag_save && !filename.equals("") ) {

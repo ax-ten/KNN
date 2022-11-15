@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eclipse-userlibraries>
+  <library name="Gradle: pro.zackpollard.telegrambot.api:jtelegram-botapi-core:1.6.5">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/pro.zackpollard.telegrambot.api/jtelegram-botapi-core/1.6.5/bddb56989b18551ba4650417a80808ec10e8daeb/jtelegram-botapi-core-1.6.5.jar" />
+  </library>
+  <library name="Gradle: com.googlecode.json-simple:json-simple:1.1.1">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/com.googlecode.json-simple/json-simple/1.1.1/c9ad4a0850ab676c5c64461a05ca524cdfff59f1/json-simple-1.1.1.jar" />
+  </library>
+  <library name="Gradle: org.junit.jupiter:junit-jupiter-api:5.9.0">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/org.junit.jupiter/junit-jupiter-api/5.9.0/a44f7eba3ea214f6ec87ad9fccd3b2ac4681a4/junit-jupiter-api-5.9.0.jar" />
+  </library>
+  <library name="Gradle: com.google.code.gson:gson:2.7">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.7/751f548c85fa49f330cecbb1875893f971b33c4e/gson-2.7.jar" />
+  </library>
+  <library name="Gradle: com.mashape.unirest:unirest-java:1.4.9">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/com.mashape.unirest/unirest-java/1.4.9/778cffcba803dc7d43932266aef4c91f5b6b4dd0/unirest-java-1.4.9.jar" />
+  </library>
+  <library name="Gradle: org.json:json:20160212">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/org.json/json/20160212/a742e3f85161835b95877478c5dd5b405cefaab9/json-20160212.jar" />
+  </library>
+  <library name="Gradle: commons-io:commons-io:2.5">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/2.5/2852e6e05fbb95076fc091f6d1780f1f8fe35e0f/commons-io-2.5.jar" />
+  </library>
+  <library name="Gradle: junit:junit:4.10">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/junit/junit/4.10/e4f1766ce7404a08f45d859fb9c226fc9e41a861/junit-4.10.jar" />
+  </library>
+  <library name="Gradle: org.junit.platform:junit-platform-commons:1.9.0">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/org.junit.platform/junit-platform-commons/1.9.0/b727889107fc28c7460b21d1083212f8ce7602c6/junit-platform-commons-1.9.0.jar" />
+  </library>
+  <library name="Gradle: org.opentest4j:opentest4j:1.2.0">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/org.opentest4j/opentest4j/1.2.0/28c11eb91f9b6d8e200631d46e20a7f407f2a046/opentest4j-1.2.0.jar" />
+  </library>
+  <library name="Gradle: org.apiguardian:apiguardian-api:1.1.2">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/org.apiguardian/apiguardian-api/1.1.2/a231e0d844d2721b0fa1b238006d15c6ded6842a/apiguardian-api-1.1.2.jar" />
+  </library>
+  <library name="Gradle: org.apache.httpcomponents:httpasyncclient:4.1.1">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpasyncclient/4.1.1/dd624f5a0ff43eb5cdf828d9739d3177ee00a5a9/httpasyncclient-4.1.1.jar" />
+  </library>
+  <library name="Gradle: org.apache.httpcomponents:httpmime:4.5.2">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpmime/4.5.2/22b4c53dd9b6761024258de8f9240c3dce6ea368/httpmime-4.5.2.jar" />
+  </library>
+  <library name="Gradle: org.apache.httpcomponents:httpclient:4.5.2">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpclient/4.5.2/733db77aa8d9b2d68015189df76ab06304406e50/httpclient-4.5.2.jar" />
+  </library>
+  <library name="Gradle: org.hamcrest:hamcrest-core:1.1">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.1/860340562250678d1a344907ac75754e259cdb14/hamcrest-core-1.1.jar" />
+  </library>
+  <library name="Gradle: org.apache.httpcomponents:httpcore-nio:4.4.4">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpcore-nio/4.4.4/16badfc2d99db264c486ba8c57ae577301a58bd9/httpcore-nio-4.4.4.jar" />
+  </library>
+  <library name="Gradle: org.apache.httpcomponents:httpcore:4.4.4">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpcore/4.4.4/b31526a230871fbe285fbcbe2813f9c0839ae9b0/httpcore-4.4.4.jar" />
+  </library>
+  <library name="Gradle: commons-logging:commons-logging:1.2">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/commons-logging/commons-logging/1.2/4bfc12adfe4842bf07b657f0369c4cb522955686/commons-logging-1.2.jar" />
+  </library>
+  <library name="Gradle: commons-codec:commons-codec:1.9">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.9/9ce04e34240f674bc72680f8b843b1457383161a/commons-codec-1.9.jar" />
+  </library>
+  <library name="Gradle: org.junit.jupiter:junit-jupiter-engine:5.9.0">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/org.junit.jupiter/junit-jupiter-engine/5.9.0/cc1cb5efae97493dcffb687253a0964ad2e7b99/junit-jupiter-engine-5.9.0.jar" />
+  </library>
+  <library name="Gradle: org.junit.platform:junit-platform-engine:1.9.0">
+    <archive path="C:/Users/ggdam/.gradle/caches/modules-2/files-2.1/org.junit.platform/junit-platform-engine/1.9.0/bd46891f01817b5ffdd368cb0482a34746610acb/junit-platform-engine-1.9.0.jar" />
+  </library>
+</eclipse-userlibraries>
+

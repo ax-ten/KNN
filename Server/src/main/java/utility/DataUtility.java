@@ -8,6 +8,7 @@ import database.InsufficientColumnNumberException;
 import database.NoValueException;
 import mining.KNN;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
