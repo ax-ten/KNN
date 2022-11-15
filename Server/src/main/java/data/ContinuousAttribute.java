@@ -2,6 +2,7 @@ package data;
 
 /**
  * Modella un attributo continuo
+ * @author Giannotte Giampiero
  */
 public class ContinuousAttribute extends Attribute {
 

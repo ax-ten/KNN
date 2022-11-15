@@ -13,7 +13,8 @@ import utility.Keyboard;
 
 
 /**
- * #todo
+ * Modella il gestore di predizioni su un trainingset
+ * @author Damato Luigi Lele
  */
 public class KNN implements Serializable{
     private Data trainingSet;

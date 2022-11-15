@@ -19,12 +19,11 @@ public class Client {
 	private ObjectOutputStream out=null;
 	private ObjectInputStream in=null;
 	/**
-	 * @param address
-	 * @param port
-	 * @throws IOException 
-	 * @throws ClassNotFoundException 
+	 * @param address indirizzo ipv4 della socket di comunicazione
+	 * @param port porta della socket di comunicazione
+	 * @throws IOException se si presentano errori di lettura/scrittura
+	 * @throws ClassNotFoundException se si presentano errori di lettura
 	 */
-	
 	public Client (String address, int port) throws IOException, ClassNotFoundException{
 			socket = new Socket(address, port);
 			System.out.println(socket);		
@@ -32,7 +31,11 @@ public class Client {
 			in = new ObjectInputStream(socket.getInputStream()); // stream con richieste del client
 			talking();
 	}
-	
+
+	/**
+	 * @throws IOException se si presentano errori di lettura/scrittura
+	 * @throws ClassNotFoundException Se si presentano errori di lettura socket
+	 */
 	private void talking() throws IOException, ClassNotFoundException {
 		
 		int decision=0;
@@ -40,9 +43,9 @@ public class Client {
 		
 		do {	
 			do{
-				System.out.println("Load KNN from file [1]");
-				System.out.println("Load KNN from binary file [2]");
-				System.out.println("Load KNN from database [3]");
+				System.out.println("[1] Load KNN from file");
+				System.out.println("[2] Load KNN from binary file ");
+				System.out.println("[3] Load KNN from database ");
 				decision=Keyboard.readInt();
 			}while(decision <0 || decision >3);
 			
@@ -109,6 +112,11 @@ public class Client {
 		while(menu.toLowerCase().equals("y"));
 		out.writeObject("END");
 	}
+
+	/**
+	 * Crea un Client di comunicazione col Server
+	 * @param args argomenti di input
+	 */
 	public static void main(String[] args){
 		try {
 			InetAddress.getByName(args[0]);
@@ -118,17 +126,9 @@ public class Client {
 		}
 		
 		try {
-			new Client(args[0], Integer.valueOf(args[1]));
-			
-		}catch (IOException e) {
+			new Client(args[0], Integer.parseInt(args[1]));
+		}catch (IOException | NumberFormatException | ClassNotFoundException e) {
 			System.out.println(e.toString());
-			return;
-		}catch (NumberFormatException e) {
-			System.out.println(e.toString());
-			return;
-		}catch (ClassNotFoundException e) {
-			System.out.println(e.toString());
-			return;
 		}
 	}
 }

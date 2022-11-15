@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * Gestore di un server thread
+ * @author Losito Nicola Dario
+ */
 public class Multiserver {
     private static int PORT = 2025;
 
@@ -15,6 +19,10 @@ public class Multiserver {
         run();
     }
 
+    /**
+     * Esegue istanza di @SimpleBot e @Multiserver
+     * @param args [port] - numero di porta della socket di comunicazione col Client
+     */
     public static void main(String[] args){
         new SimpleBot();
         if (args.length>0)
@@ -23,6 +31,9 @@ public class Multiserver {
             new Multiserver(PORT);
     }
 
+    /**
+     * Blocco di codice del thread server
+     */
     private void run(){
         try (ServerSocket s = new ServerSocket(PORT)){
             System.out.println("Server Started");

@@ -19,6 +19,7 @@ import utility.DataUtility;
 import static utility.DataUtility.addMissingExtention;
 
 /**
+ * Modella Server basato su Thread
  * @author Losito Nicola Dario
  */
 public class ServeOneClient extends Thread{

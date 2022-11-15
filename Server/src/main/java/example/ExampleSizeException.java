@@ -1,9 +1,10 @@
 package example;
 
+/**
+ * Segnala dimensioni diverse di due esempi chiamati nei metodi Example.distance() ed Example.swap()
+ * @author Damato Luigi Lele
+ */
 public class ExampleSizeException extends  Exception {
-    //da sollevare nei metodi swap e
-    //distance di Example qualora i due esempi coinvolti dall’operazione non abbiano la stessa dimensione.
-
     public ExampleSizeException (){super("Esempio da predire non ha la stessa dimensione del training set");}
     public ExampleSizeException (String msg){super(msg);}
 }

@@ -2,6 +2,7 @@ package data;
 
 /**
  * modella un attributo discreto
+ * @author Giannotte Giampiero
  */
 public class DiscreteAttribute extends Attribute {
     /**

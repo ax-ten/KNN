@@ -8,7 +8,7 @@ import java.util.*;
 
 /**
  * Modella un Esempio
- * @author Giannotte
+ * @author Giannotte Giampiero
  */
 public class Example implements Serializable{
     private List<Object> example;

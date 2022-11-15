@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * Gestisce i metedati di una tabella
+ * @author Losito Nicola Dario
  */
 public class TableSchema implements Iterable<Column>{
 	

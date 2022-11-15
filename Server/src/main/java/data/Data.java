@@ -9,6 +9,7 @@ import java.util.*;
 
 /**
  * Modella il training set
+ * @author Damato Luigi Lele
  */
 public class Data implements Serializable{
     private List<Example> data;
@@ -207,10 +208,10 @@ public class Data implements Serializable{
      * ordina e ripartisce gli elementi di dataScaled, target e key in base ai parametri inf e sup
      * in accordo ai valori contenuti in key
      *
-     * @param key #todo
+     * @param key lista di ordinamento
      * @param inf indice inferiore
      * @param sup indice superiore
-     * @return #todo
+     * @return partizione di key
      */
     private int partition(List<Double> key, int inf, int sup)  {
         int i = inf;
@@ -306,7 +307,7 @@ public class Data implements Serializable{
      * @param e example di riferimento
      * @param k distanza massima tra e ed il vettore target
      * @return la media dei valori precedenti al k-esimo dopo aver ordinato target
-     * @throws ExampleSizeException
+     * @throws ExampleSizeException se dataScaled ed e sono di dimensioni diverse
      */
     public double avgClosest(Example e, int k) throws ExampleSizeException {
         List<Double> key = new ArrayList<>();
@@ -325,10 +326,10 @@ public class Data implements Serializable{
         return this.avgTillPoint(this.target, i - 1);
     }
 
-    /** Funzione privata che restituisce la media aritmetica di solo i primi elementi di una lista
+    /**
      * @param l lista dal quale ottenere la media
      * @param point indice (incluso) dell'elemento ultimo da cui ottenere la media aritmentica
-     * @return
+     * @return la media aritmetica di solo i primi elementi di una lista
      */
     private double avgTillPoint(List<Double> l, int point) {
         double sum = 0.0D;
@@ -338,7 +339,8 @@ public class Data implements Serializable{
         return sum / (double)(point + 1);
     }
 
-    /**  Restituisce nuova istanza di Example con valori discreti inalterati e valori continui
+    /**
+     * Restituisce nuova istanza di Example con valori discreti inalterati e valori continui
      *   scalati tra 0 e 1 in base alla funzione scale
      * @param e Example da copiare e scalare
      * @return Example scalato
@@ -356,7 +358,8 @@ public class Data implements Serializable{
         return example;
     }
 
-    /** builder di Stringa ad alto linguaggio che descrive ogni riga del dataset (e.g.: [1]   3.0,A,2)
+    /**
+     * builder di Stringa ad alto linguaggio che descrive ogni riga del dataset (e.g.: [1]   3.0,A,2)
      * @return stringa di dataset formattato e leggibile
      */
     public String toString(){

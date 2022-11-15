@@ -31,6 +31,7 @@ import java.util.*;
  *
  * Apre un thread che ricava autonomamente il suo socket in comunicazione coi server telegram, sui quali effettua
  * polling per ottenere nuovi eventi chat, che gestisce autonomamente.
+ * @author Damato Luigi Lele
  */
 public class SimpleBot {
     /**
