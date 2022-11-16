@@ -1,4 +1,4 @@
-package Client.client;
+package Client;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -115,13 +115,15 @@ public class Client {
 
 	/**
 	 * Crea un Client di comunicazione col Server
-	 * @param args argomenti di input
+	 * @param args [address] indirizzo di connessione
+	 *             [port] porta di connessione
 	 */
 	public static void main(String[] args){
 		try {
-			InetAddress.getByName(args[0]);
+			System.out.println(args[0]);
+			InetAddress.getAllByName(args[0]);
 		} catch (UnknownHostException e) {
-			System.out.println(e.toString());
+			e.printStackTrace();
 			return;
 		}
 		

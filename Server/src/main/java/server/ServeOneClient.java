@@ -24,7 +24,7 @@ import static utility.DataUtility.addMissingExtention;
  */
 public class ServeOneClient extends Thread{
     
-    private final String LOCALPATH = "Server/Test file/";
+    private final String LOCALPATH = "src/main/Testfile";
     private final String TXTEXT = ".dat";
     private final String BINEXT = ".dmp";
 
@@ -54,33 +54,34 @@ public class ServeOneClient extends Thread{
                 switch (str) {
                     case "1":{
                         System.out.println("Echoing: Load KNN from file");
-                        while (!Objects.equals(filename, "")) {
+                        while (Objects.equals(filename, ".")) {
                             filename = in.readObject().toString();
-                            trainingSet = DataUtility.getTrainingSetFromDat(addMissingExtention(filename,TXTEXT));
-                            out.writeObject(trainingSet.toString());
-                            knn = new KNN(trainingSet); //Save KNN to binary
-                            knn.salva(LOCALPATH+tablename+"DB"+BINEXT);
                         }
+                        trainingSet = DataUtility.getTrainingSetFromDat(addMissingExtention(filename,TXTEXT));
+                        out.writeObject(trainingSet.toString());
+                        knn = new KNN(trainingSet); //Save KNN to binary
+                        knn.salva(LOCALPATH+filename+BINEXT);
                         break;
                     }
 				    case "2":{
                         System.out.println("Echoing: Load KNN from binary file");
-                        while (!Objects.equals(filename, "")) {
-                            filename = addMissingExtention(in.readObject().toString(), BINEXT);
-                            knn = new KNN(DataUtility.getTrainingSetFromDmp(filename));
-                            out.writeObject(knn.getData().toString());
+                        while (Objects.equals(filename, ".")) {
+                            filename = in.readObject().toString();
                         }
+                        trainingSet = DataUtility.getTrainingSetFromDmp(addMissingExtention(filename, BINEXT));
+                        out.writeObject(trainingSet.toString());
+                        knn = new KNN(trainingSet);
                         break;
                     }
                     case "3":{
                         System.out.println("Echoing: Load KNN from database");
-                        while (!Objects.equals(tablename, "")) {
+                        while (Objects.equals(tablename, ".")) {
                             tablename = in.readObject().toString();
-                            trainingSet = DataUtility.getTrainingSetFromDB(tablename);
-                            out.writeObject(trainingSet.toString());
-                            knn = new KNN(trainingSet); //Save KNN to binary
-                            knn.salva(LOCALPATH+tablename+"DB"+BINEXT);
                         }
+                        trainingSet = DataUtility.getTrainingSetFromDB(tablename);
+                        out.writeObject(trainingSet.toString());
+                        knn = new KNN(trainingSet); //Save KNN to binary
+                        knn.salva(LOCALPATH+tablename+"DB"+BINEXT);
                         break;
                     }
                 }

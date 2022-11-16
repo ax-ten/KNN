@@ -6,3 +6,9 @@ Client/.idea/
 Server/build/
 
 Server/.gradle/
+
+Server_Base/.gradle/
+
+Server_Base/build/
+
+Client/out/
