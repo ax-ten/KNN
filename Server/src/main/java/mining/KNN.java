@@ -58,7 +58,8 @@ public class KNN implements Serializable{
         try{
             k = Integer.parseInt(args[args.length - 1]);
         } catch (NumberFormatException e){throw new ExampleSizeException();}
-        Example e = new Example(Arrays.copyOf(args, args.length-1));
+        String[] ss = Arrays.copyOf(args, args.length-1);
+        Example e = new Example(ss, trainingSet.getExplanatorySet());
         return  trainingSet.avgClosest(e,k);
     }
 
@@ -75,11 +76,11 @@ public class KNN implements Serializable{
      */
     public Double predict (ObjectOutputStream out, ObjectInputStream in)
             throws IOException, ClassNotFoundException, ClassCastException, ExampleSizeException {
-        System.out.println("Reading Example");
         Example e = trainingSet.readExample(out,in);
-        int k=0;
+
         out.writeObject("Inserisci valore k>=1:");
-        k=(Integer)(in.readObject());
+        out.writeObject("@READINT");
+        int k=(int)(in.readObject());
         return trainingSet.avgClosest(e, k);
     }
 

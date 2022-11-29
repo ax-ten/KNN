@@ -18,9 +18,9 @@ import java.util.regex.Pattern;
  * @author Giannotte Giampiero
  */
 public class DataUtility {
-    static final String LOCALPATH = "src/main/Testfile/";
-    static final String TXTEXT = ".dat";
-    static final String BINEXT = ".dmp";
+    private static final String LOCALPATH = "src/main/Testfile/";
+    private static final String TXTEXT = ".dat";
+    private static final String BINEXT = ".dmp";
 
 
     /**

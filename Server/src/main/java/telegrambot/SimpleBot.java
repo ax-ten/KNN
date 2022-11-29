@@ -192,9 +192,9 @@ public class SimpleBot {
                         break;
                     case "start":
                         reply(event, "Benvenutx in KNNbot! \nPer cominciare ad utilizzare questo bot utilizza uno " +
-                                "degli appositi comandi listati nel menù. Per i comandi di caricamento del KNN il bot " +
-                                "si aspetta anche il nome del file da aprire subito dopo il comando. Altrimenti puoi"+
-                                "caricare direttamente un file di testo (in formato .dat) e verrà automaticamente elaborato");
+                                "degli appositi comandi listati nel menu'. Per i comandi di caricamento del KNN il bot " +
+                                "si aspetta anche il nome del file da aprire subito dopo il comando. Altrimenti si puo' "+
+                                "caricare direttamente un file di testo (in formato .dat) e verra' automaticamente elaborato");
                         break;
                     default:
                         reply(event,"Comando non riconosciuto");

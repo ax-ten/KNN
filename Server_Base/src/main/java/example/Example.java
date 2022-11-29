@@ -11,22 +11,23 @@ import java.util.*;
  * @author Giannotte Giampiero
  */
 public class Example implements Serializable{
-    private List<Object> example;
+    private List<Object> attributes;
     private int size;
 
     /**
      * @param size dimensione dell'Example
      */
     public Example(int size) {
-        this.example = new ArrayList<>(size);
+        this.attributes = new ArrayList<>(size);
         this.size = size;
     }
+
 
     /**
      * @return dimensione dell'Example
      */
     public int getSize(){
-        return example.size();
+        return attributes.size();
     }
 
     /**
@@ -38,9 +39,9 @@ public class Example implements Serializable{
         if (index > size) throw new IndexOutOfBoundsException();
         else {
             try {
-                this.example.set(index, o);
+                this.attributes.set(index, o);
             } catch (IndexOutOfBoundsException e){
-                this.example.add(o);
+                this.attributes.add(o);
             }
         }
     }
@@ -51,14 +52,14 @@ public class Example implements Serializable{
      * @throws IndexOutOfBoundsException se index non rispetta la dimensione di Example
      */
     public Object get(int index) throws IndexOutOfBoundsException {
-        return this.example.get(index);
+        return this.attributes.get(index);
     }
 
     /**
      * @param o aggiungi un elemento all'esempio
      */
     public void add(Object o) {
-        this.example.add(o);
+        this.attributes.add(o);
         this.size++;
     }
 
@@ -67,12 +68,12 @@ public class Example implements Serializable{
      * @throws ExampleSizeException se l'oggetto chiamante ed e hanno dimensioni diverse
      */
     public void swap(Example e) throws ExampleSizeException {
-        if (e.example.size() != this.example.size()) {
+        if (e.attributes.size() != this.attributes.size()) {
             throw new ExampleSizeException();
         } else {
-            Example temp = new Example(this.example.size());
+            Example temp = new Example(this.attributes.size());
 
-            for(int i = 0; i < this.example.size(); ++i) {
+            for(int i = 0; i < this.attributes.size(); ++i) {
                 temp.set(i,this.get(i));
                 this.set(i,e.get(i));
                 e.set(i,temp.get(i));
@@ -86,7 +87,7 @@ public class Example implements Serializable{
     public String toString(){
         StringBuilder output = new StringBuilder();
         for (int i=0;i<this.getSize();i++){
-            output.append(String.format("%s, ", this.example.get(i)));
+            output.append(String.format("%s, ", this.attributes.get(i)));
         }
         return output.toString();
     }
@@ -101,10 +102,10 @@ public class Example implements Serializable{
      */
     public double distance(Example e) throws ExampleSizeException, IllegalArgumentException {
         double d = 0.0D;
-        if (e.example.size() != this.example.size()) {
+        if (e.attributes.size() != this.attributes.size()) {
             throw new ExampleSizeException();
         } else {
-            for(int i = 0; i < e.example.size(); ++i) {
+            for(int i = 0; i < e.attributes.size(); ++i) {
                 if (this.get(i) instanceof String && e.get(i) instanceof String){
                     if (!this.get(i).equals(e.get(i))) {
                         d = d+1;

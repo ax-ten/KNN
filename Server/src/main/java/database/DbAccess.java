@@ -16,7 +16,7 @@ public class DbAccess {
 	private final int PORT = 3306;
 	private final String DATABASE = "Map";
 	private final String USER_ID = "Student";
-	private final String PASSWORD = "map";
+	private final String PASSWORD = "map2";
 
 	private Connection conn;
 

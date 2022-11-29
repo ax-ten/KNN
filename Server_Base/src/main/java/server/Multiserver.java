@@ -9,10 +9,10 @@ import java.net.Socket;
  * @author Losito Nicola Dario
  */
 public class Multiserver {
-    private static int PORT = 2025;
+    private static int port = 2024;
 
     public Multiserver(int port){
-        PORT = port;
+        Multiserver.port = port;
         run();
     }
 
@@ -22,31 +22,31 @@ public class Multiserver {
      */
     public static void main(String[] args){
         if (args.length>0)
-            new Multiserver(Integer.valueOf(args[0]));
+            new Multiserver(Integer.parseInt(args[0]));
         else
-            new Multiserver(PORT);
+            new Multiserver(port);
     }
 
     /**
      * Blocco di codice del thread server
      */
     private void run(){
-        try (ServerSocket s = new ServerSocket(PORT)){
-            System.out.println("Server Started");
-            System.out.println("addr: "+s.getLocalSocketAddress()+" port: "+s.getLocalPort());
-            while(true) {
-            // Si blocca finchè non si verifica una connessione:
+        while (true) {
+            try (ServerSocket s = new ServerSocket(++port)) {
+                System.out.println("Porta aperta: "+port);
+                // Si blocca finchè non si verifica una connessione:
                 Socket socket = s.accept();
                 try {
                     new ServeOneClient(socket);
-                }catch(IOException e) {
+                    System.out.println("Nuovo Client"+socket.getInetAddress().toString()+ ", porta condivisa: "+port);
+                } catch (IOException e) {
                     // Se fallisce chiude il socket,
                     // altrimenti il thread la chiuderà:
                     socket.close();
-                    }                    
+                }
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
             }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
         }
     }       
 }

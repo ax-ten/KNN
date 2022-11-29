@@ -180,11 +180,9 @@ public class Data implements Serializable{
                 out.writeObject("Inserisci valore discreto X["+i+"]: ");
                 e.set(i,in.readObject());
             } else {
-                do {
-                    out.writeObject("@READDOUBLE");
-                    out.writeObject("Inserisci valore continuo X["+i+"]: ");
-                    x=(Double)in.readObject();
-                } while(Double.valueOf(x).equals(Double.NaN));
+                out.writeObject("@READDOUBLE");
+                out.writeObject("Inserisci valore continuo X["+i+"]: ");
+                x=(Double)in.readObject();
                 e.set(i,x);
             }
             i++;
@@ -310,12 +308,14 @@ public class Data implements Serializable{
      * @throws ExampleSizeException se dataScaled ed e sono di dimensioni diverse
      */
     public double avgClosest(Example e, int k) throws ExampleSizeException {
+        double d;
         List<Double> key = new ArrayList<>();
         Example scaledExample = scaledExample(e);
         int i;
 
         for(i = 0; i < this.dataScaled.size(); ++i) {
-            key.add(scaledExample.distance(this.dataScaled.get(i)));
+            d=scaledExample.distance(this.dataScaled.get(i));
+            key.add(d);
         }
 
         quicksort(key, 0, this.dataScaled.size() - 1);
